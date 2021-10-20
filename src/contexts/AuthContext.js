@@ -2,7 +2,12 @@ import React, { useContext, useState, useEffect } from "react";
 // import app from "../firebase";
 import {
   createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
   onAuthStateChanged,
+  sendPasswordResetEmail,
+  updateEmail as updateEmailFirebase,
+  updatePassword as updatePasswordFirebase,
 } from "firebase/auth";
 import { auth } from "../firebase";
 
@@ -24,14 +29,43 @@ export function AuthProvider({ children }) {
   // optional could put initial state of variable as arg of useState func
   const [currentUser, setCurrentUser] = useState();
 
+  // firebase has not yet authenticated user so currently in loading state
+  const [loading, setLoading] = useState(true);
+
   // function creates a user with given email and pass using firebase auth
   function signup(email, password) {
     return createUserWithEmailAndPassword(auth, email, password);
+    // return sendEmailVerification()
+  }
+
+  // function signs in a user with given email and pass using firebase auth
+  function login(email, password) {
+    return signInWithEmailAndPassword(auth, email, password);
+  }
+
+  // function logouts the current user
+  function logout() {
+    return signOut(auth);
+  }
+
+  // function that sends reset password email
+  function resetPassword(email) {
+    return sendPasswordResetEmail(auth, email);
+  }
+
+  // function that updates email
+  function updateEmail(email) {
+    return updateEmailFirebase(currentUser, email);
+  }
+  // function that updates password
+  function updatePassword(password) {
+    return updatePasswordFirebase(currentUser, password);
   }
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
+      setLoading(false);
     });
     return unsubscribe;
   }, []);
@@ -40,12 +74,19 @@ export function AuthProvider({ children }) {
   const authDetails = {
     currentUser,
     signup,
+    login,
+    logout,
+    resetPassword,
+    updateEmail,
+    updatePassword,
   };
 
-  console.log(authDetails);
+  // console.log(authDetails);
 
   return (
     // provides auth details to all of the children components
-    <AuthContext.Provider value={authDetails}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={authDetails}>
+      {!loading && children}
+    </AuthContext.Provider>
   );
 }
