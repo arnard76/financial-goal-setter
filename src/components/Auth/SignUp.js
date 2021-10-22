@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
 
 export default function SignUp() {
   const emailRef = useRef();
@@ -29,8 +29,8 @@ export default function SignUp() {
       history.push("/");
     } catch {
       setError("Failed to create an account");
+      setLoading(false);
     }
-    setLoading(false);
   }
 
   return (

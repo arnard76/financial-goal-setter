@@ -67,6 +67,7 @@ export function AuthProvider({ children }) {
       setCurrentUser(user);
       setLoading(false);
     });
+
     return unsubscribe;
   }, []);
 
@@ -80,8 +81,6 @@ export function AuthProvider({ children }) {
     updateEmail,
     updatePassword,
   };
-
-  // console.log(authDetails);
 
   return (
     // provides auth details to all of the children components

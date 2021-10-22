@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
 
 export default function LogIn() {
   const emailRef = useRef();
@@ -17,14 +17,14 @@ export default function LogIn() {
 
     try {
       // neccesary cuz user may try again and if different error, previous error should go away
-      setError("");
       setLoading(true);
+      setError("");
       await login(emailRef.current.value, passwordRef.current.value);
       history.push("/");
     } catch {
       setError("Username or password is incorrect");
+      setLoading(false);
     }
-    setLoading(false);
   }
 
   return (
