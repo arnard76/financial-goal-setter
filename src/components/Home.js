@@ -5,10 +5,7 @@ import Payments from "./Payments";
 
 export default function Home() {
   return (
-    <div
-      className="w-100 d-flex justify-content-between"
-      style={{ height: "100vh" }}
-    >
+    <div className="flex ">
       {/* <h2>Home</h2>
       <Link to="/profile">Your Profile</Link> */}
       <Sidebar />
