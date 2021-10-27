@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { Card, Button, Alert } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import FormGroup from "../FormGroup";
+import Button from "../Button";
+import Message from "../Message";
 
 export default function Profile() {
   const [error, setError] = useState("");
@@ -23,21 +25,19 @@ export default function Profile() {
 
   return (
     <>
-      <Card>
-        <Card.Body>
-          <h2 className="text-center mb-4">Profile</h2>
-          {error && <Alert variant="danger">{error}</Alert>}
-          <strong>Email: </strong>
-          {currentUser.email}
-          <Link to="/update-profile/" className="btn btn-primary w-100 mt-3">
-            Update Profile
-          </Link>
-        </Card.Body>
-      </Card>
-      <div className="w-100 text-center mt-2">
-        <Button variant="link" onClick={handleLogout} disabled={loading}>
+      <div className=" bg-gray-100 p-4 rounded-md ">
+        <h2 className=" text-center mb-4 text-2xl">Profile</h2>
+        <strong>Email: </strong>
+        {currentUser.email}
+        <Link to="/update-profile/">
+          <Button>Update Profile</Button>
+        </Link>
+        {error && <Message type="error" message={error} />}
+      </div>
+      <div className=" text-blue-500 text-center mt-2">
+        <button onClick={handleLogout} disabled={loading}>
           Log Out
-        </Button>
+        </button>
       </div>
     </>
   );

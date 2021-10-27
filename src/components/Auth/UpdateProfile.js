@@ -1,7 +1,9 @@
 import React, { useRef, useState } from "react";
-// import { Form, Button, Card, Alert } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import FormGroup from "../FormGroup";
+import Button from "../Button";
+import Message from "../Message";
 
 export default function UpdateProfile() {
   const emailRef = useRef();
@@ -52,45 +54,40 @@ export default function UpdateProfile() {
 
   return (
     <>
-      <Card>
-        <Card.Body>
-          <h2 className="text-center mb-4">Update profile</h2>
-          {error && <Alert variant="danger">{error}</Alert>}
-          <Form onSubmit={handleSubmit}>
-            <Form.Group id="email">
-              <Form.Label>Email</Form.Label>
-              <Form.Control
-                type="email"
-                ref={emailRef}
-                required
-                defaultValue={currentUser.email}
-              />
-            </Form.Group>
-            <Form.Group id="password">
-              <Form.Label>Password</Form.Label>
-              <Form.Control
-                type="password"
-                ref={passwordRef}
-                placeholder="Leave blank to keep the same"
-              />
-            </Form.Group>
-            <Form.Group id="password-confirm">
-              <Form.Label>Password Confirmation</Form.Label>
-              <Form.Control
-                type="password"
-                ref={passwordConfirmRef}
-                placeholder="Leave blank to keep the same"
-              />
-            </Form.Group>
-            <Button disabled={loading} className="w-100 mt-2" type="submit">
-              Update Profile
-            </Button>
-          </Form>
-        </Card.Body>
-      </Card>
-      <div className="w-100 text-center mt-2">
-        <Link to="/">Cancel</Link>
+      <div className=" bg-gray-100 p-4 rounded-md">
+        <h2 className=" text-center mb-4 text-2xl">Update Profile</h2>
+        <form className="flex flex-col">
+          <FormGroup
+            type="email"
+            label="Email"
+            required={true}
+            ref={emailRef}
+            defaultValue={currentUser.email}
+          />
+          <FormGroup
+            type="password"
+            label="Password"
+            required={true}
+            ref={passwordRef}
+            placeholder="Leave blank to keep the same"
+          />
+          <FormGroup
+            type="password"
+            label="Confirm password"
+            required={true}
+            ref={passwordConfirmRef}
+            placeholder="Leave blank to keep the same"
+          />
+          <button disabled={loading} onClick={handleSubmit}>
+            <Button>Update Profile</Button>
+          </button>
+        </form>
+        {error && <Message type="error" message={error} />}
       </div>
+
+      <Link to="/profile" className="block text-blue-500 text-center mt-2">
+        Cancel
+      </Link>
     </>
   );
 }

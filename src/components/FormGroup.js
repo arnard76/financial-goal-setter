@@ -2,18 +2,19 @@ import React, { forwardRef } from "react";
 
 const FormGroup = forwardRef((props, ref) => {
   // props = {type: "text", placeholder: "enter payment name", label:"Name", prefix: undefined, postfix: undefined}
-  function handleInputClasses(classList) {
-    if (classList === undefined) {
-      return "";
-    }
-  }
+
   function handleInputType(type) {
     if (type === "textarea") {
       return (
         <textarea
           type={props.type}
           placeholder={props.placeholder}
-          className={props.classes}
+          className={
+            props.classes === ""
+              ? ` w-full p-2 rounded-md outline-none border-2 border-transparent focus:border-blue-500`
+              : props.classes +
+                ` w-full p-2 rounded-md outline-none border-2 border-transparent focus:border-blue-500`
+          }
           ref={ref}
           defaultValue={props.initial}
           required={props.required}
@@ -26,7 +27,12 @@ const FormGroup = forwardRef((props, ref) => {
         <select
           type={props.type}
           placeholder={props.placeholder}
-          className={props.classes}
+          className={
+            props.classes === ""
+              ? ` w-full p-2 rounded-md outline-none border-2 border-transparent focus:border-blue-500`
+              : props.classes +
+                ` w-full p-2 rounded-md outline-none border-2 border-transparent focus:border-blue-500`
+          }
           ref={ref}
           required={props.required}
           defaultValue={props.initial}
@@ -42,17 +48,21 @@ const FormGroup = forwardRef((props, ref) => {
       <input
         type={props.type}
         placeholder={props.placeholder}
-        className={props.classes}
+        className={
+          props.classes === ""
+            ? ` w-full p-2 rounded-md outline-none border-2 border-transparent focus:border-blue-500`
+            : props.classes +
+              ` w-full p-2 rounded-md outline-none border-2 border-transparent focus:border-blue-500`
+        }
         ref={ref}
         defaultValue={props.initial}
         required={props.required}
       />
     );
   }
-  handleInputClasses(props.classes);
 
   return (
-    <div className="mb-5 dark">
+    <div className="mb-5 dark ">
       {props.label && (
         <label className="dark:text-white text-black">{props.label}</label>
       )}

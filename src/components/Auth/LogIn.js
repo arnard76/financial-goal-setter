@@ -2,7 +2,7 @@ import React, { createRef, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import Button from "../Button";
-import ErrorMessage from "../ErrorMessage";
+import Message from "../Message";
 import FormGroup from "../FormGroup";
 
 export default function LogIn() {
@@ -31,7 +31,7 @@ export default function LogIn() {
 
   return (
     <>
-      <div className=" bg-gray-200 px-2 py-4 rounded-md ">
+      <div className=" bg-gray-100 p-4 rounded-md ">
         <h2 className=" text-center mb-4 text-2xl">Log In</h2>
         <form className="flex flex-col">
           <FormGroup
@@ -39,7 +39,6 @@ export default function LogIn() {
             label="Email"
             required={true}
             ref={emailRef}
-            classes="block"
           />
           <FormGroup
             type="password"
@@ -51,18 +50,23 @@ export default function LogIn() {
             <Button>Log In</Button>
           </button>
         </form>
-        {error && <ErrorMessage message={error} />}
+        {error && <Message type="error" message={error} />}
       </div>
 
       <div className="text-center mt-2">
         <p>
           Forgot your password?{" "}
-          <Link to="/forgot-password">Reset Password</Link>
+          <Link to="/forgot-password" className="text-blue-500">
+            Reset Password
+          </Link>
         </p>
       </div>
       <div className="text-center mt-2">
         <p>
-          Don't have an account? <Link to="/signup">Sign Up</Link>
+          Don't have an account?{" "}
+          <Link to="/signup" className="text-blue-500">
+            Sign Up
+          </Link>
         </p>
       </div>
     </>

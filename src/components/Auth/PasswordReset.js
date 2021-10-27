@@ -1,7 +1,9 @@
 import React, { useRef, useState } from "react";
-// import { Form, Button, Card, Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import FormGroup from "../FormGroup";
+import Button from "../Button";
+import Message from "../Message";
 
 export default function PasswordReset() {
   const emailRef = useRef();
@@ -31,28 +33,38 @@ export default function PasswordReset() {
 
   return (
     <>
-      <Card>
-        <Card.Body>
-          <h2 className="text-center mb-4">Reset your password</h2>
-          {error && <Alert variant="danger">{error}</Alert>}
-          {message && <Alert variant="success">{message}</Alert>}
-          <Form onSubmit={handleSubmit}>
-            <Form.Group id="email">
-              <Form.Label>Email</Form.Label>
-              <Form.Control type="email" ref={emailRef} required />
-            </Form.Group>
-
-            <Button disabled={loading} className="w-100 mt-2" type="submit">
-              Send password reset email
-            </Button>
-          </Form>
-        </Card.Body>
-      </Card>
-      <div className="w-100 text-center mt-2">
-        Remembered your password? <Link to="/login">Log In</Link>
+      <div className=" bg-gray-100 p-4 rounded-md ">
+        <h2 className=" text-center mb-4 text-2xl">Reset your password</h2>
+        <form className="flex flex-col">
+          <FormGroup
+            type="email"
+            label="Email"
+            required={true}
+            ref={emailRef}
+          />
+          <button disabled={loading} onClick={handleSubmit}>
+            <Button>Send password reset email</Button>
+          </button>
+        </form>
+        {error && <Message type="error" message={error} />}
+        {message && <Message message={message} />}
       </div>
-      <div className="w-100 text-center mt-2">
-        Don't have an account? <Link to="/signup">Sign Up</Link>
+
+      <div className="text-center mt-2">
+        <p>
+          Remembered your password?{" "}
+          <Link to="/login" className="text-blue-500">
+            Log In
+          </Link>
+        </p>
+      </div>
+      <div className="text-center mt-2">
+        <p>
+          Don't have an account?{" "}
+          <Link to="/signup" className="text-blue-500">
+            Sign Up
+          </Link>
+        </p>
       </div>
     </>
   );
