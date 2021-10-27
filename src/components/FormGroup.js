@@ -1,8 +1,7 @@
-import React, { useRef } from "react";
+import React, { forwardRef } from "react";
 
-export default function FormGroup(props) {
+const FormGroup = forwardRef((props, ref) => {
   // props = {type: "text", placeholder: "enter payment name", label:"Name", prefix: undefined, postfix: undefined}
-  const inputRef = useRef();
   function handleInputClasses(classList) {
     if (classList === undefined) {
       return "";
@@ -15,7 +14,7 @@ export default function FormGroup(props) {
           type={props.type}
           placeholder={props.placeholder}
           className={props.classes}
-          ref={inputRef}
+          ref={ref}
           defaultValue={props.initial}
           required={props.required}
         ></textarea>
@@ -28,14 +27,12 @@ export default function FormGroup(props) {
           type={props.type}
           placeholder={props.placeholder}
           className={props.classes}
-          ref={inputRef}
+          ref={ref}
           required={props.required}
+          defaultValue={props.initial}
         >
           {props.options.map((option) => {
-            if (props.initial === option) {
-              return <option selected>{option}</option>;
-            }
-            return <option>{option}</option>;
+            return <option key={option}>{option}</option>;
           })}
         </select>
       );
@@ -46,7 +43,7 @@ export default function FormGroup(props) {
         type={props.type}
         placeholder={props.placeholder}
         className={props.classes}
-        ref={inputRef}
+        ref={ref}
         defaultValue={props.initial}
         required={props.required}
       />
@@ -55,18 +52,24 @@ export default function FormGroup(props) {
   handleInputClasses(props.classes);
 
   return (
-    <div className="px-2 mb-5 ">
+    <div className="mb-5 dark">
       {props.label && (
-        <label className="text-white dark:text-black">{props.label}</label>
+        <label className="dark:text-white text-black">{props.label}</label>
       )}
 
       <div className="flex">
-        {props.prefix && <p className="mr-1 text-white">{props.prefix}</p>}
+        {props.prefix && (
+          <p className="mr-1 dark:text-white text-black">{props.prefix}</p>
+        )}
 
         {handleInputType(props.type)}
 
-        {props.postfix && <p className="ml-1 text-white">{props.postfix}</p>}
+        {props.postfix && (
+          <p className="ml-1 dark:text-white text-black">{props.postfix}</p>
+        )}
       </div>
     </div>
   );
-}
+});
+
+export default FormGroup;

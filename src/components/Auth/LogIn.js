@@ -1,11 +1,13 @@
-import React, { useRef, useState } from "react";
-// import { Form, Button, Card, Alert } from "react-bootstrap";
+import React, { createRef, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import Button from "../Button";
+import ErrorMessage from "../ErrorMessage";
+import FormGroup from "../FormGroup";
 
 export default function LogIn() {
-  const emailRef = useRef();
-  const passwordRef = useRef();
+  const emailRef = createRef();
+  const passwordRef = createRef();
   const { login } = useAuth();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -29,34 +31,36 @@ export default function LogIn() {
 
   return (
     <>
-      <Card>
-        <Card.Body>
-          <h2 className="text-center mb-4">Log In</h2>
-          {error && <Alert variant="danger">{error}</Alert>}
-          <Form onSubmit={handleSubmit}>
-            <Form.Group id="email">
-              <Form.Label>Email</Form.Label>
-              <Form.Control type="email" ref={emailRef} required />
-            </Form.Group>
-            <Form.Group id="password">
-              <Form.Label>Password</Form.Label>
-              <Form.Control type="password" ref={passwordRef} required />
-            </Form.Group>
+      <div className=" bg-gray-200 px-2 py-4 rounded-md ">
+        <h2 className=" text-center mb-4 text-2xl">Log In</h2>
+        <form className="flex flex-col">
+          <FormGroup
+            type="email"
+            label="Email"
+            required={true}
+            ref={emailRef}
+            classes="block"
+          />
+          <FormGroup
+            type="password"
+            label="Password"
+            required={true}
+            ref={passwordRef}
+          />
+          <button disabled={loading} onClick={handleSubmit}>
+            <Button>Log In</Button>
+          </button>
+        </form>
+        {error && <ErrorMessage message={error} />}
+      </div>
 
-            <Button disabled={loading} className="w-100 mt-2" type="submit">
-              Log In
-            </Button>
-          </Form>
-        </Card.Body>
-      </Card>
-
-      <div className="w-100 text-center mt-2">
+      <div className="text-center mt-2">
         <p>
           Forgot your password?{" "}
           <Link to="/forgot-password">Reset Password</Link>
         </p>
       </div>
-      <div className="w-100 text-center mt-2">
+      <div className="text-center mt-2">
         <p>
           Don't have an account? <Link to="/signup">Sign Up</Link>
         </p>

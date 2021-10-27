@@ -1,7 +1,9 @@
 import React, { useRef, useState } from "react";
-// import { Form, Button, Card, Alert } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import FormGroup from "../FormGroup";
+import Button from "../Button";
+import ErrorMessage from "../ErrorMessage";
 
 export default function SignUp() {
   const emailRef = useRef();
@@ -35,31 +37,38 @@ export default function SignUp() {
 
   return (
     <>
-      <Card>
-        <Card.Body>
-          <h2 className="text-center mb-4">Sign Up</h2>
-          {error && <Alert variant="danger">{error}</Alert>}
-          <Form onSubmit={handleSubmit}>
-            <Form.Group id="email">
-              <Form.Label>Email</Form.Label>
-              <Form.Control type="email" ref={emailRef} required />
-            </Form.Group>
-            <Form.Group id="password">
-              <Form.Label>Password</Form.Label>
-              <Form.Control type="password" ref={passwordRef} required />
-            </Form.Group>
-            <Form.Group id="password-confirm">
-              <Form.Label>Password Confirmation</Form.Label>
-              <Form.Control type="password" ref={passwordConfirmRef} required />
-            </Form.Group>
-            <Button disabled={loading} className="w-100 mt-2" type="submit">
-              Sign Up
-            </Button>
-          </Form>
-        </Card.Body>
-      </Card>
-      <div className="w-100 text-center mt-2">
-        Already have an account? <Link to="/login">Log In</Link>
+      <div className=" bg-gray-200 px-2 py-4 rounded-md">
+        <h2 className=" text-center mb-4 text-2xl">Sign Up</h2>
+        <form className="flex flex-col">
+          <FormGroup
+            type="email"
+            label="Email"
+            required={true}
+            ref={emailRef}
+          />
+          <FormGroup
+            type="password"
+            label="Password"
+            required={true}
+            ref={passwordRef}
+          />
+          <FormGroup
+            type="password"
+            label="Confirm password"
+            required={true}
+            ref={passwordConfirmRef}
+          />
+          <button disabled={loading} onClick={handleSubmit}>
+            <Button>Sign Up</Button>
+          </button>
+        </form>
+        {error && <ErrorMessage message={error} />}
+      </div>
+
+      <div className="text-center mt-2">
+        <p>
+          Already have an account? <Link to="/login">Login</Link>
+        </p>
       </div>
     </>
   );
