@@ -10,7 +10,7 @@ const FormGroup = forwardRef((props, ref) => {
           type={props.type}
           placeholder={props.placeholder}
           className={
-            props.classes === ""
+            props.classes === undefined
               ? ` w-full p-2 rounded-md outline-none border-2 border-transparent focus:border-blue-500`
               : props.classes +
                 ` w-full p-2 rounded-md outline-none border-2 border-transparent focus:border-blue-500`
@@ -28,7 +28,7 @@ const FormGroup = forwardRef((props, ref) => {
           type={props.type}
           placeholder={props.placeholder}
           className={
-            props.classes === ""
+            props.classes === undefined
               ? ` w-full p-2 rounded-md outline-none border-2 border-transparent focus:border-blue-500`
               : props.classes +
                 ` w-full p-2 rounded-md outline-none border-2 border-transparent focus:border-blue-500`
@@ -49,10 +49,10 @@ const FormGroup = forwardRef((props, ref) => {
         type={props.type}
         placeholder={props.placeholder}
         className={
-          props.classes === ""
-            ? ` w-full p-2 rounded-md outline-none border-2 border-transparent focus:border-blue-500`
+          props.classes === undefined
+            ? ` w-full p-2 rounded-md outline-none border-2 border-transparent focus:border-blue-500 text-black`
             : props.classes +
-              ` w-full p-2 rounded-md outline-none border-2 border-transparent focus:border-blue-500`
+              ` w-full p-2 rounded-md outline-none border-2 border-transparent focus:border-blue-500 text-black`
         }
         ref={ref}
         defaultValue={props.initial}
@@ -62,12 +62,12 @@ const FormGroup = forwardRef((props, ref) => {
   }
 
   return (
-    <div className="mb-5 dark ">
+    <div className="mb-5">
       {props.label && (
         <label className="dark:text-white text-black">{props.label}</label>
       )}
 
-      <div className="flex">
+      <div className="flex items-center">
         {props.prefix && (
           <p className="mr-1 dark:text-white text-black">{props.prefix}</p>
         )}
