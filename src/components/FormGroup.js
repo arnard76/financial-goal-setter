@@ -4,6 +4,7 @@ const FormGroup = forwardRef((props, ref) => {
   // props = {type: "text", placeholder: "enter payment name", label:"Name", prefix: undefined, postfix: undefined}
 
   function handleInputType(type) {
+    // textarea
     if (type === "textarea") {
       return (
         <textarea
@@ -22,6 +23,7 @@ const FormGroup = forwardRef((props, ref) => {
       );
     }
 
+    // select w/ options
     if (type === "select") {
       return (
         <select
@@ -44,6 +46,7 @@ const FormGroup = forwardRef((props, ref) => {
       );
     }
 
+    //else: input
     return (
       <input
         type={props.type}
