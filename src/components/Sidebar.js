@@ -1,41 +1,30 @@
-import React, { createRef, useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-import FormGroup from "./FormGroup";
-import Message from "./Message";
+
 import Button from "./Button";
 import Tooltip from "./Tooltip";
+import AddPaymentForm from "./Forms/AddPaymentForm";
+import SettingsForm from "./Forms/SettingsForm";
 
 export default function Sidebar(props) {
-  // console.log(window.outerWidth, window.innerWidth, breakPointsBootstrap.lg);
-  // const [screenWidth, setScreenWidth] = useState(window.innerWidth);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [message, setMessage] = useState("");
-  const incomeTypeRef = createRef();
-  // useEffect(() => {
-  //   window.addEventListener("resize", () => {
-  //     setScreenWidth(window.innerWidth);
-  //   });
-  // });
-
   function handleShowTab(tabName) {
     // console.log("opening ", tabName, " tab!");
     var clickedTab = document.querySelector("#" + tabName + "-tab");
     var tabs = document.querySelectorAll(".nav-tab");
 
-    tabs.forEach((tab) => {
-      tab.classList.remove("inline-flex");
-      tab.classList.add("hidden");
-    });
-    clickedTab.classList.toggle("hidden");
-    clickedTab.classList.toggle("inline-flex");
-  }
-
-  function handleSubmit(event) {
-    event.preventDefault();
-    console.log("payment will be added we assure you");
-    // setError("")
-    setMessage("it wasn't added but who cares am i right?");
+    if (!clickedTab.classList.contains("hidden")) {
+      clickedTab.classList.add("hidden");
+      clickedTab.classList.remove("inline-flex");
+    } else {
+      tabs.forEach((tab) => {
+        if (!tab.classList.contains("hidden")) {
+          tab.classList.add("hidden");
+          tab.classList.remove("inline-flex");
+        }
+      });
+      clickedTab.classList.add("inline-flex");
+      clickedTab.classList.remove("hidden");
+    }
   }
 
   function handleHoverNavIcon(event) {
@@ -92,48 +81,7 @@ export default function Sidebar(props) {
         <strong className=" text-xl text-center my-2">
           <h1>Add a payment</h1>
         </strong>
-        <form className="flex flex-col">
-          <FormGroup
-            type="textarea"
-            label="Notes"
-            placeholder="Additional details that could be important"
-            classes={""}
-            required={false} // useless statement
-          />
-          <FormGroup
-            type="text"
-            label="Name"
-            placeholder="Coffee,Haircut,Mortgage ..."
-            classes={""}
-            required={true}
-          />
-          <FormGroup
-            type="number"
-            label="Value"
-            prefix="$"
-            postfix="USD"
-            placeholder="How much money?"
-            initial="5"
-            classes={"w-16"}
-            required={true}
-          />
-          <FormGroup
-            type="select"
-            label="Type"
-            initial="Continuous"
-            classes={""}
-            required={true}
-            options={["Continuous", "Repeated", "One-off"]}
-          />
-          <FormGroup type="date" label="Start" required={true} />
-          <FormGroup type="date" label="End" required={true} />
-
-          <button disabled={loading} onClick={handleSubmit}>
-            <Button>Add Payment</Button>
-          </button>
-        </form>
-        {error && <Message type="error" message={error} />}
-        {message && <Message message={message} />}
+        <AddPaymentForm />
       </div>
       <div
         id="results-tab"
@@ -143,7 +91,7 @@ export default function Sidebar(props) {
           <h1>Financial Goals</h1>
         </strong>
         <p>
-          Annual total: ${props.results.annualTotal} {props.results.currency}
+          Annual total: ${props.results.annualTotal} {props.settings.currency}
         </p>
       </div>
       <div
@@ -153,32 +101,7 @@ export default function Sidebar(props) {
         <strong className=" text-xl text-center my-2">
           <h1>Personal Settings</h1>
         </strong>
-        <form className="flex flex-col">
-          <FormGroup
-            type="checkbox"
-            prefix="Wage"
-            postfix="Salary"
-            label="Income Type"
-            ref={incomeTypeRef}
-          />
-          <FormGroup
-            type="number"
-            prefix="$"
-            postfix={props.results.currency}
-            label="Hourly Wage"
-          />
-          <FormGroup
-            type="number"
-            prefix="$"
-            postfix={props.results.currency}
-            label="Yearly Salary"
-          />
-          <button disabled={loading} onClick={handleSubmit}>
-            <Button>Update Settings</Button>
-          </button>
-        </form>
-        {error && <Message type="error" message={error} />}
-        {message && <Message message={message} />}
+        <SettingsForm currentCurrency={props.settings.currency} />
       </div>
     </div>
   );

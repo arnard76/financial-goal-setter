@@ -8,7 +8,7 @@ export default function Home() {
     <div className="flex ">
       {/* <h2>Home</h2>
       <Link to="/profile">Your Profile</Link> */}
-      <Sidebar results={{ annualTotal: 5, currency: "NZD" }} />
+      <Sidebar results={{ annualTotal: 5 }} settings={{ currency: "NZD" }} />
       <Payments />
     </div>
   );
