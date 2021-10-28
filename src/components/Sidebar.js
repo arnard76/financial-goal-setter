@@ -103,7 +103,7 @@ export default function Sidebar(props) {
       {/* SETTINGS TAB */}
       <div
         id="settings-tab"
-        className="nav-tab  flex-col  bg-gray-100 p-4 overflow-y-auto hidden"
+        className="nav-tab  flex-col w-64 bg-gray-100 p-4 overflow-y-auto hidden"
       >
         <strong className=" text-xl text-center my-2">
           <h1>Personal Settings</h1>
