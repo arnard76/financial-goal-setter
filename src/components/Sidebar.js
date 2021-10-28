@@ -33,8 +33,9 @@ export default function Sidebar(props) {
   }
 
   return (
-    <div className="bg-gray-500  h-screen flex">
-      <nav className="flex flex-col justify-around p-4 text-white">
+    <div className="h-screen flex">
+      {/* NAV */}
+      <nav className="flex flex-col justify-around p-4 text-white bg-gray-500">
         <Button
           classes="h-16 w-16 flex justify-center  items-center rounded-3xl"
           onMouseEnter={handleHoverNavIcon}
@@ -74,6 +75,8 @@ export default function Sidebar(props) {
           </Button>
         </Link>
       </nav>
+
+      {/* ADD TAB */}
       <div
         id="add-tab"
         className="nav-tab  flex-col  bg-gray-100 p-4 overflow-y-auto hidden"
@@ -83,6 +86,8 @@ export default function Sidebar(props) {
         </strong>
         <AddPaymentForm />
       </div>
+
+      {/* RESULTS TAB */}
       <div
         id="results-tab"
         className="nav-tab  flex-col  bg-gray-100 p-4 overflow-y-auto hidden"
@@ -94,6 +99,8 @@ export default function Sidebar(props) {
           Annual total: ${props.results.annualTotal} {props.settings.currency}
         </p>
       </div>
+
+      {/* SETTINGS TAB */}
       <div
         id="settings-tab"
         className="nav-tab  flex-col  bg-gray-100 p-4 overflow-y-auto hidden"
