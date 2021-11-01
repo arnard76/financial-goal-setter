@@ -2,7 +2,6 @@ import React, { useRef, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import FormGroup from "../FormGroup";
-import Button from "../Button";
 import Message from "../Message";
 
 export default function UpdateProfile() {
@@ -78,9 +77,9 @@ export default function UpdateProfile() {
             ref={passwordConfirmRef}
             placeholder="Leave blank to keep the same"
           />
-          <button disabled={loading} onClick={handleSubmit}>
-            <Button>Update Profile</Button>
-          </button>
+          <div disabled={loading} onClick={handleSubmit} className="button">
+            Update Profile
+          </div>
         </form>
         {error && <Message type="error" message={error} />}
       </div>

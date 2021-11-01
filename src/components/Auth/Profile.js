@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import FormGroup from "../FormGroup";
-import Button from "../Button";
 import Message from "../Message";
 
 export default function Profile() {
@@ -29,15 +27,15 @@ export default function Profile() {
         <h2 className=" text-center mb-4 text-2xl">Profile</h2>
         <strong>Email: </strong>
         {currentUser.email}
-        <Link to="/update-profile/">
-          <Button>Update Profile</Button>
+        <Link to="/update-profile/" className="button">
+          Update Profile
         </Link>
         {error && <Message type="error" message={error} />}
       </div>
       <div className=" text-blue-500 text-center mt-2">
-        <button onClick={handleLogout} disabled={loading}>
+        <Link disabled={loading} onClick={handleLogout}>
           Log Out
-        </button>
+        </Link>
       </div>
     </>
   );

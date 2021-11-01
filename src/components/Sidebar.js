@@ -1,86 +1,71 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-import Button from "./Button";
 import Tooltip from "./Tooltip";
-import AddPaymentForm from "./Forms/AddPaymentForm";
+import AddPaymentForm from "./Forms/AddPaymentForm2";
 import SettingsForm from "./Forms/SettingsForm";
 
 export default function Sidebar(props) {
-  function handleShowTab(tabName) {
-    // console.log("opening ", tabName, " tab!");
+  function handleClickNavIcon(event, tabName) {
+    var clickedIcon = event.currentTarget;
+    var navIcons = document.querySelectorAll(".nav-icon");
     var clickedTab = document.querySelector("#" + tabName + "-tab");
-    var tabs = document.querySelectorAll(".nav-tab");
+    var navTabs = document.querySelectorAll(".nav-tab");
+    console.log(event.currentTarget);
 
-    if (!clickedTab.classList.contains("hidden")) {
-      clickedTab.classList.add("hidden");
-      clickedTab.classList.remove("inline-flex");
+    // toggle the tab (and close any others)
+    if (clickedTab.classList.contains("active")) {
+      clickedTab.classList.remove("active");
+      clickedIcon.classList.remove("active");
     } else {
-      tabs.forEach((tab) => {
-        if (!tab.classList.contains("hidden")) {
-          tab.classList.add("hidden");
-          tab.classList.remove("inline-flex");
-        }
+      navTabs.forEach((tab) => {
+        tab.classList.remove("active");
       });
-      clickedTab.classList.add("inline-flex");
-      clickedTab.classList.remove("hidden");
+      navIcons.forEach((icon) => {
+        icon.classList.remove("active");
+      });
+      clickedIcon.classList.add("active");
+      clickedTab.classList.add("active");
     }
-  }
-
-  function handleHoverNavIcon(event) {
-    event.target.classList.toggle("rounded-xl");
-    event.target.classList.toggle("rounded-3xl");
   }
 
   return (
     <div className="h-screen flex">
       {/* NAV */}
       <nav className="flex flex-col justify-around p-4 text-white bg-gray-500">
-        <Button
-          classes="h-16 w-16 flex justify-center  items-center rounded-3xl"
-          onMouseEnter={handleHoverNavIcon}
-          onMouseLeave={handleHoverNavIcon}
-          onClick={(event) => handleShowTab("add")}
+        <div
+          className="button nav-icon"
+          onClick={(event) => handleClickNavIcon(event, "add")}
         >
-          <i className="fa fa-plus fa-2x " aria-hidden="true"></i>
-        </Button>
+          <i
+            className="fa fa-plus fa-2x pointer-events-none"
+            aria-hidden="true"
+          ></i>
+        </div>
         <Tooltip
           text="Add"
           classes="absolute transform translate-x-16 ml-4 bg-gray-500 py-1 px-3 hidden"
         />
-        <Button
-          classes="h-16 w-16 flex justify-center  items-center rounded-3xl"
-          onMouseEnter={handleHoverNavIcon}
-          onMouseLeave={handleHoverNavIcon}
-          onClick={(event) => handleShowTab("results")}
+        <div
+          className="button nav-icon"
+          onClick={(event) => handleClickNavIcon(event, "results")}
         >
           <i className="fa fa-file-text fa-2x " aria-hidden="true"></i>
-        </Button>
-        <Button
-          classes="h-16 w-16 flex justify-center  items-center rounded-3xl"
-          onMouseEnter={handleHoverNavIcon}
-          onMouseLeave={handleHoverNavIcon}
-          onClick={(event) => handleShowTab("settings")}
+        </div>
+        <div
+          className="button nav-icon"
+          onClick={(event) => handleClickNavIcon(event, "settings")}
         >
           <i className="fa fa-cog fa-2x " aria-hidden="true"></i>
-        </Button>
+        </div>
 
-        <Link to="/profile">
-          <Button
-            classes="h-16 w-16 flex justify-center  items-center rounded-3xl"
-            onMouseEnter={handleHoverNavIcon}
-            onMouseLeave={handleHoverNavIcon}
-          >
-            <i className="fa fa-user fa-2x" aria-hidden="true"></i>
-          </Button>
+        <Link to="/profile" className="button nav-icon">
+          <i className="fa fa-user fa-2x" aria-hidden="true"></i>
         </Link>
       </nav>
 
       {/* ADD TAB */}
-      <div
-        id="add-tab"
-        className="nav-tab  flex-col  bg-gray-100 p-4 overflow-y-auto hidden"
-      >
+      <div id="add-tab" className="nav-tab  ">
         <strong className=" text-xl text-center my-2">
           <h1>Add a payment</h1>
         </strong>
@@ -88,10 +73,7 @@ export default function Sidebar(props) {
       </div>
 
       {/* RESULTS TAB */}
-      <div
-        id="results-tab"
-        className="nav-tab  flex-col  bg-gray-100 p-4 overflow-y-auto hidden"
-      >
+      <div id="results-tab" className="nav-tab  ">
         <strong className=" text-xl text-center my-2">
           <h1>Financial Goals</h1>
         </strong>

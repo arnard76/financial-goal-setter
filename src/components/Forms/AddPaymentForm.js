@@ -1,7 +1,8 @@
-import React, { createRef, useRef, useState } from "react";
+import React, { createRef, useState } from "react";
 import FormGroup from "../FormGroup";
 import Message from "../Message";
-import Button from "../Button";
+import { collection, doc, addDoc, setDoc } from "firebase/firestore";
+import { db } from "../../firebase";
 
 export default function AddPaymentForm() {
   // to control form inputs/actions
@@ -12,11 +13,11 @@ export default function AddPaymentForm() {
   // to store all form values
   const paymentNameRef = createRef();
   const paymentValueRef = createRef();
-  const paymentTypeRef = createRef();
+  const [paymentType, setPaymentType] = useState("");
   const paymentFrequencyCountRef = createRef();
   const paymentFrequencyPeriodRef = createRef();
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
     setLoading(true);
     setError("");
@@ -24,7 +25,24 @@ export default function AddPaymentForm() {
 
     // verify input data
 
-    setError("it wasn't added but who cares am i right?");
+    console.log(
+      "payment amount: ",
+      typeof paymentValueRef.current.value,
+      "   ",
+      paymentValueRef
+    );
+    const docRef = await addDoc(collection(db, "payments"), {
+      Name: paymentNameRef.current.value,
+      // Type: paymentTypeRef.current.value,
+      User: "xPgTU8nHX2bIjEC2gVsAf3kHBLo1",
+      Value: parseInt(paymentValueRef.current.value),
+      "Frequency Count": parseInt(paymentFrequencyCountRef.current.value),
+      "Frequency Period": paymentFrequencyPeriodRef.current.value,
+      // "Start Date": payment
+    });
+    console.log("Document written with ID: ", docRef.id);
+
+    setError("it was added? but who cares am i right?");
   }
 
   return (
@@ -37,6 +55,13 @@ export default function AddPaymentForm() {
           classes={""}
           required={true}
           ref={paymentNameRef}
+        />
+        <input
+          placeholder="Coffee,Haircut,Mortgage ..."
+          type="text"
+          className="form-group"
+          ref={paymentNameRef}
+          required
         />
         <FormGroup
           type="number"
@@ -56,7 +81,6 @@ export default function AddPaymentForm() {
           classes={""}
           required={true}
           options={["Continuous", "Repeated", "One-off"]}
-          ref={paymentTypeRef}
         />
         <FormGroup
           type="number"
@@ -86,9 +110,9 @@ export default function AddPaymentForm() {
           <></>
         )} */}
 
-        <button disabled={loading} onClick={handleSubmit}>
-          <Button>Add Payment</Button>
-        </button>
+        <div disabled={loading} onClick={handleSubmit} className="button">
+          Add Payment
+        </div>
       </form>
       {error && <Message type="error" message={error} />}
       {message && <Message message={message} />}

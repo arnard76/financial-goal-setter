@@ -1,7 +1,6 @@
 import React, { createRef, useState } from "react";
 import FormGroup from "../FormGroup";
 import Message from "../Message";
-import Button from "../Button";
 
 export default function SettingsForm(props) {
   const [loading, setLoading] = useState(false);
@@ -42,9 +41,9 @@ export default function SettingsForm(props) {
           postfix={props.currentCurrency}
           label="Yearly Salary"
         />
-        <button disabled={loading} onClick={handleSubmit}>
-          <Button>Update Settings</Button>
-        </button>
+        <div disabled={loading} onClick={handleSubmit} className="button">
+          Update Settings
+        </div>
       </form>
       {error && <Message type="error" message={error} />}
       {message && <Message message={message} />}

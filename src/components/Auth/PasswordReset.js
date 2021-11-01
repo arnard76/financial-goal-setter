@@ -2,7 +2,6 @@ import React, { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import FormGroup from "../FormGroup";
-import Button from "../Button";
 import Message from "../Message";
 
 export default function PasswordReset() {
@@ -42,9 +41,9 @@ export default function PasswordReset() {
             required={true}
             ref={emailRef}
           />
-          <button disabled={loading} onClick={handleSubmit}>
-            <Button>Send password reset email</Button>
-          </button>
+          <div disabled={loading} onClick={handleSubmit} className="button">
+            Send password reset email
+          </div>
         </form>
         {error && <Message type="error" message={error} />}
         {message && <Message message={message} />}

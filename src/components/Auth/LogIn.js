@@ -1,7 +1,6 @@
 import React, { createRef, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import Button from "../Button";
 import Message from "../Message";
 import FormGroup from "../FormGroup";
 
@@ -46,9 +45,9 @@ export default function LogIn() {
             required={true}
             ref={passwordRef}
           />
-          <button disabled={loading} onClick={handleSubmit}>
-            <Button>Log In</Button>
-          </button>
+          <div disabled={loading} onClick={handleSubmit} className="button">
+            Log In
+          </div>
         </form>
         {error && <Message type="error" message={error} />}
       </div>
