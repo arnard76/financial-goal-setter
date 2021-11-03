@@ -47,14 +47,15 @@ export default function UpdateProfile() {
       .catch(() => {
         setError("Failed to update account");
         setLoading(false);
-      })
-      .finally(() => {});
+      });
   }
 
   return (
     <>
-      <div className=" bg-gray-100 p-4 rounded-md">
-        <h2 className=" text-center mb-4 text-2xl">Update Profile</h2>
+      <div className=" bg-gray-100 dark:bg-gray-900 p-4 rounded-md">
+        <h2 className=" text-center mb-4 text-2xl dark:text-white">
+          Update Profile
+        </h2>
         <form className="flex flex-col">
           <FormGroup
             type="email"

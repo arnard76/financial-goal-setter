@@ -23,11 +23,11 @@ export default function Profile() {
 
   return (
     <>
-      <div className=" bg-gray-100 p-4 rounded-md ">
+      <div className=" bg-gray-100 dark:bg-gray-900 dark:text-white p-4 rounded-md ">
         <h2 className=" text-center mb-4 text-2xl">Profile</h2>
         <strong>Email: </strong>
         {currentUser.email}
-        <Link to="/update-profile/" className="button">
+        <Link to="/update-profile/" className="block mt-2 button">
           Update Profile
         </Link>
         {error && <Message type="error" message={error} />}

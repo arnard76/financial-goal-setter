@@ -32,7 +32,7 @@ export default function Sidebar(props) {
   return (
     <div className="h-screen flex">
       {/* NAV */}
-      <nav className="flex flex-col justify-around p-4 text-white bg-gray-500">
+      <nav className="flex flex-col justify-around p-4  bg-gray-200 dark:bg-gray-900">
         <div
           className="button nav-icon"
           onClick={(event) => handleClickNavIcon(event, "add")}
@@ -66,15 +66,15 @@ export default function Sidebar(props) {
 
       {/* ADD TAB */}
       <div id="add-tab" className="nav-tab  ">
-        <strong className=" text-xl text-center my-2">
+        <strong className=" text-xl text-center my-2 text-gray-900 dark:text-white">
           <h1>Add a payment</h1>
         </strong>
         <AddPaymentForm />
       </div>
 
       {/* RESULTS TAB */}
-      <div id="results-tab" className="nav-tab  ">
-        <strong className=" text-xl text-center my-2">
+      <div id="results-tab" className="nav-tab  text-gray-900 dark:text-white">
+        <strong className=" text-xl text-center my-2 ">
           <h1>Financial Goals</h1>
         </strong>
         <p>
@@ -83,10 +83,7 @@ export default function Sidebar(props) {
       </div>
 
       {/* SETTINGS TAB */}
-      <div
-        id="settings-tab"
-        className="nav-tab  flex-col w-64 bg-gray-100 p-4 overflow-y-auto hidden"
-      >
+      <div id="settings-tab" className="nav-tab text-gray-900 dark:text-white">
         <strong className=" text-xl text-center my-2">
           <h1>Personal Settings</h1>
         </strong>

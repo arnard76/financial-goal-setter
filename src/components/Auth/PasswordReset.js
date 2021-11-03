@@ -32,8 +32,10 @@ export default function PasswordReset() {
 
   return (
     <>
-      <div className=" bg-gray-100 p-4 rounded-md ">
-        <h2 className=" text-center mb-4 text-2xl">Reset your password</h2>
+      <div className=" bg-gray-100 dark:bg-gray-900 p-4 rounded-md ">
+        <h2 className=" text-center mb-4 text-2xl dark:text-white">
+          Reset your password
+        </h2>
         <form className="flex flex-col">
           <FormGroup
             type="email"
@@ -49,7 +51,7 @@ export default function PasswordReset() {
         {message && <Message message={message} />}
       </div>
 
-      <div className="text-center mt-2">
+      <div className="text-center mt-2 dark:text-white">
         <p>
           Remembered your password?{" "}
           <Link to="/login" className="text-blue-500">
@@ -57,7 +59,7 @@ export default function PasswordReset() {
           </Link>
         </p>
       </div>
-      <div className="text-center mt-2">
+      <div className="text-center mt-2 dark:text-white">
         <p>
           Don't have an account?{" "}
           <Link to="/signup" className="text-blue-500">

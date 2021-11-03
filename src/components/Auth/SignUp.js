@@ -36,8 +36,8 @@ export default function SignUp() {
 
   return (
     <>
-      <div className=" bg-gray-100 p-4 rounded-md">
-        <h2 className=" text-center mb-4 text-2xl">Sign Up</h2>
+      <div className=" bg-gray-100 dark:bg-gray-900 p-4 rounded-md">
+        <h2 className=" text-center mb-4 text-2xl dark:text-white">Sign Up</h2>
         <form className="flex flex-col">
           <FormGroup
             type="email"
@@ -64,7 +64,7 @@ export default function SignUp() {
         {error && <Message type="error" message={error} />}
       </div>
 
-      <div className="text-center mt-2">
+      <div className="text-center mt-2 dark:text-white">
         <p>
           Already have an account?{" "}
           <Link to="/login" className="text-blue-500">

@@ -14,7 +14,7 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 
 function AuthApp() {
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center dark:bg-gray-800">
       <div className=" w-screen sm:max-w-md">
         <AuthProvider>
           <Switch>

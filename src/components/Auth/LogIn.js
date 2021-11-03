@@ -30,8 +30,8 @@ export default function LogIn() {
 
   return (
     <>
-      <div className=" bg-gray-100 p-4 rounded-md ">
-        <h2 className=" text-center mb-4 text-2xl">Log In</h2>
+      <div className=" bg-gray-100 dark:bg-gray-900 p-4 rounded-md ">
+        <h2 className=" text-center mb-4 text-2xl dark:text-white">Log In</h2>
         <form className="flex flex-col">
           <FormGroup
             type="email"
@@ -52,7 +52,7 @@ export default function LogIn() {
         {error && <Message type="error" message={error} />}
       </div>
 
-      <div className="text-center mt-2">
+      <div className="text-center mt-2 dark:text-white">
         <p>
           Forgot your password?{" "}
           <Link to="/forgot-password" className="text-blue-500">
@@ -60,7 +60,7 @@ export default function LogIn() {
           </Link>
         </p>
       </div>
-      <div className="text-center mt-2">
+      <div className="text-center mt-2 dark:text-white">
         <p>
           Don't have an account?{" "}
           <Link to="/signup" className="text-blue-500">
