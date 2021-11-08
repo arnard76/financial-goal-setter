@@ -1,60 +1,74 @@
 import React, { useEffect, useState } from "react";
-import Payment from "./Payment";
-import { db } from "../firebase";
-import { useAuth } from "../contexts/AuthContext";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import Payment, { PaymentMenu } from "./Payment";
 
-export default function Payments() {
-  const { currentUser } = useAuth();
-  const [payments, setPayments] = useState([]);
+export default function Payments({ payments }) {
+  const [activePayment, setActivePayment] = useState({ id: null });
+  const examplePayments = [
+    {
+      id: "TNrc4oq57VAvNK72vtUD",
+      notes: "In newmarket, with student discount :)",
+      name: "Haircut",
+      value: 15,
+      "frequency count": 1,
+      "frequency period": "month",
+      start: Date.UTC(1000, 1, 1),
+      end: Date.UTC(9999, 12, 31),
+    },
+    {
+      id: "TNrc4oq57VAvNK72vtUE",
+      notes: "Delivered from countdown",
+      name: "Groceries",
+      value: 200,
+      "frequency count": 4,
+      "frequency period": "month",
+      start: Date.UTC(1000, 1, 1),
+      end: Date.UTC(9999, 12, 31),
+    },
+  ];
 
-  useEffect(() => {
-    // console.log(currentUser, currentUser.uid);
+  // const { id, notes, name, value, frequency, start, end } = examplePayment;
 
-    async function fetchPayments() {
-      const q = query(
-        collection(db, "payments"),
-        where("User", "==", currentUser.uid)
-      );
-
-      const querySnapshot = await getDocs(q);
-
-      querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        // console.log(doc.id, " => ", doc.data());
-        setPayments((payments) => {
-          return [...payments, doc.data()];
-        });
-      });
+  function handleActivatePayment(payment) {
+    console.log("check", payment);
+    if (activePayment.id == payment.id) {
+      setActivePayment({ id: null });
+    } else {
+      setActivePayment(payment);
     }
-
-    fetchPayments();
-
-    return () => {};
-  }, [currentUser]);
+  }
 
   return (
-    <div className="flex-1 p-4 h-screen overflow-y-auto bg-white dark:bg-gray-900">
-      <strong className=" text-xl text-center my-2 text-gray-900 dark:text-white">
-        <h1>What does your financial goal look like?</h1>
-      </strong>
-
-      {payments.map((payment) => {
-        return (
-          <Payment
-            name={payment.Name}
-            value={payment.Value}
-            frequency={[
-              payment["Frequency Count"],
-              payment["Frequency Period"],
-            ]}
+    <>
+      <div className="flex flex-1">
+        <div className="flex-1 p-4 h-screen overflow-y-auto bg-white dark:bg-gray-900">
+          <strong className=" text-xl text-center text-gray-900 dark:text-white">
+            <h1>What does your financial goal look like?</h1>
+          </strong>
+          {examplePayments.map((payment) => {
+            // console.log(payment);
+            return (
+              <Payment
+                onClick={() => handleActivatePayment(payment)}
+                key={payment.id}
+                name={payment.name}
+                value={payment.value}
+                frequency={`
+                  ${payment["frequency count"]} times a ${payment["frequency period"]}`}
+              />
+            );
+          })}
+        </div>
+        {activePayment.id && (
+          <PaymentMenu
+            notes={activePayment.notes}
+            name={activePayment.name}
+            value={activePayment.value}
+            frequency={activePayment.frequency}
+            start={activePayment.start}
+            end={activePayment.end}
           />
-        );
-      })}
-
-      {/* <Payment name="Haircut" value={25} frequency={[1, "Month"]} />
-      <Payment name="Groceries" value={200} frequency={[4, "Month"]} />
-       */}
-    </div>
+        )}
+      </div>
+    </>
   );
 }
