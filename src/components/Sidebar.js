@@ -85,8 +85,13 @@ export default function Sidebar(props) {
       {/* SETTINGS TAB */}
       <div id="settings-tab" className="nav-tab text-gray-900 dark:text-white">
         <strong className=" text-xl text-center my-2">
-          <h1>Personal Settings</h1>
+          <h1>Income Information</h1>
         </strong>
+        <p>
+          These settings are optional - you can still see your analysis without
+          adding income information!
+        </p>
+        <br />
         <SettingsForm currentCurrency={props.settings.currency} />
       </div>
     </div>
