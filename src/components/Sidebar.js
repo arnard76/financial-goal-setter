@@ -11,7 +11,7 @@ export default function Sidebar(props) {
     var navIcons = document.querySelectorAll(".nav-icon");
     var clickedTab = document.querySelector("#" + tabName + "-tab");
     var navTabs = document.querySelectorAll(".nav-tab");
-    console.log(event.currentTarget);
+    // console.log(event.currentTarget);
 
     // toggle the tab (and close any others)
     if (clickedTab.classList.contains("active")) {

@@ -33,7 +33,7 @@ export default function Profile() {
         {error && <Message type="error" message={error} />}
       </div>
       <div className=" text-blue-500 text-center mt-2">
-        <Link disabled={loading} onClick={handleLogout}>
+        <Link disabled={loading} onClick={handleLogout} to="">
           Log Out
         </Link>
       </div>
