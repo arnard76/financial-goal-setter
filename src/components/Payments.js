@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Payment, { PaymentMenu } from "./Payment";
 
 export default function Payments({ payments }) {
@@ -30,7 +30,7 @@ export default function Payments({ payments }) {
 
   function handleActivatePayment(payment) {
     console.log("check", payment);
-    if (activePayment.id == payment.id) {
+    if (activePayment.id === payment.id) {
       setActivePayment({ id: null });
     } else {
       setActivePayment(payment);
