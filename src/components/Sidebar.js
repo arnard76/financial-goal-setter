@@ -1,9 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-import Tooltip from "./Tooltip";
 import AddPaymentForm from "./Forms/AddPaymentForm2";
 import SettingsForm from "./Forms/SettingsForm";
+import Tooltip from "./Tooltip";
 
 export default function Sidebar(props) {
   function handleClickNavIcon(event, tabName) {
@@ -41,23 +41,27 @@ export default function Sidebar(props) {
             className="fa fa-plus fa-2x pointer-events-none"
             aria-hidden="true"
           ></i>
-          <Tooltip text="Add" active />
+          <Tooltip text="Add" />
         </div>
         <div
           className="button nav-icon"
-          onClick={(event) => handleClickNavIcon(event, "results")}
+          onClick={(event) => handleClickNavIcon(event, "analysis")}
         >
           <i className="fa fa-file-text fa-2x " aria-hidden="true"></i>
+          <Tooltip text="Analysis" />
         </div>
         <div
-          className="button nav-icon"
-          onClick={(event) => handleClickNavIcon(event, "settings")}
+          className="button nav-icon group"
+          onClick={(event) => handleClickNavIcon(event, "income")}
         >
           <i className="fa fa-cog fa-2x " aria-hidden="true"></i>
+          {/* <p className="tooltip">Income</p> */}
+          <Tooltip text="Income" />
         </div>
 
         <Link to="/profile" className="button nav-icon">
           <i className="fa fa-user fa-2x" aria-hidden="true"></i>
+          <Tooltip text="Profile" />
         </Link>
       </nav>
 
@@ -70,7 +74,7 @@ export default function Sidebar(props) {
       </div>
 
       {/* RESULTS TAB */}
-      <div id="results-tab" className="nav-tab  text-gray-900 dark:text-white">
+      <div id="analysis-tab" className="nav-tab  text-gray-900 dark:text-white">
         <strong className=" text-xl text-center my-2 ">
           <h1>Financial Goals</h1>
         </strong>
@@ -79,8 +83,8 @@ export default function Sidebar(props) {
         </p>
       </div>
 
-      {/* SETTINGS TAB */}
-      <div id="settings-tab" className="nav-tab text-gray-900 dark:text-white">
+      {/* INCOME TAB */}
+      <div id="income-tab" className="nav-tab text-gray-900 dark:text-white">
         <strong className=" text-xl text-center my-2">
           <h1>Income Information</h1>
         </strong>
