@@ -38,6 +38,7 @@ const FormGroup = forwardRef((props, ref) => {
           ref={ref}
           required={props.required}
           defaultValue={props.initial}
+          onChange={props.onChange}
         >
           {props.options.map((option) => {
             return <option key={option}>{option}</option>;

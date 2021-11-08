@@ -32,7 +32,7 @@ export default function Sidebar(props) {
   return (
     <div className="h-screen flex">
       {/* NAV */}
-      <nav className="flex flex-col justify-around p-4  bg-gray-200 dark:bg-gray-900">
+      <nav className="relative flex flex-col justify-around p-4  bg-gray-200 dark:bg-gray-900">
         <div
           className="button nav-icon"
           onClick={(event) => handleClickNavIcon(event, "add")}
@@ -41,11 +41,8 @@ export default function Sidebar(props) {
             className="fa fa-plus fa-2x pointer-events-none"
             aria-hidden="true"
           ></i>
+          <Tooltip text="Add" active />
         </div>
-        <Tooltip
-          text="Add"
-          classes="absolute transform translate-x-16 ml-4 bg-gray-500 py-1 px-3 hidden"
-        />
         <div
           className="button nav-icon"
           onClick={(event) => handleClickNavIcon(event, "results")}
@@ -65,11 +62,11 @@ export default function Sidebar(props) {
       </nav>
 
       {/* ADD TAB */}
-      <div id="add-tab" className="nav-tab  ">
+      <div id="add-tab" className="nav-tab">
         <strong className=" text-xl text-center my-2 text-gray-900 dark:text-white">
           <h1>Add a payment</h1>
         </strong>
-        <AddPaymentForm />
+        <AddPaymentForm fetchPayments={props.fetchPayments} />
       </div>
 
       {/* RESULTS TAB */}
