@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import FormGroup from "../FormGroup";
+import FormGroup from "../FormGroup2";
 import Message from "../Message";
 
 export default function SignUp() {
@@ -22,6 +22,11 @@ export default function SignUp() {
       return; // so it doesn't execute code below
     }
 
+    if (passwordRef.current.value.length < 6) {
+      setError("Password needs to be 6 characters or longer");
+      return;
+    }
+
     try {
       setLoading(true);
       // neccesary cuz user may try again and if different error, previous error should go away
@@ -39,27 +44,36 @@ export default function SignUp() {
       <div className=" bg-gray-100 dark:bg-gray-900 p-4 rounded-md">
         <h2 className=" text-center mb-4 text-2xl dark:text-white">Sign Up</h2>
         <form className="flex flex-col">
-          <FormGroup
-            type="email"
-            label="Email"
-            required={true}
-            ref={emailRef}
-          />
-          <FormGroup
-            type="password"
-            label="Password"
-            required={true}
-            ref={passwordRef}
-          />
-          <FormGroup
-            type="password"
-            label="Confirm password"
-            required={true}
-            ref={passwordConfirmRef}
-          />
-          <div disabled={loading} onClick={handleSubmit} className="button">
+          <FormGroup label="Email">
+            <input
+              className="form-input"
+              type="email"
+              required
+              placeholder="Please input an email address"
+              ref={emailRef}
+            />
+          </FormGroup>
+          <FormGroup label="Password">
+            <input
+              className="form-input"
+              type="password"
+              required
+              ref={passwordRef}
+              placeholder="Please input an password"
+            />
+          </FormGroup>
+          <FormGroup label="Confirm password">
+            <input
+              className="form-input"
+              type="password"
+              required
+              ref={passwordConfirmRef}
+              placeholder="Please confirm password"
+            />
+          </FormGroup>
+          <button disabled={loading} onClick={handleSubmit} className="button">
             Sign Up
-          </div>
+          </button>
         </form>
         {error && <Message type="error" message={error} />}
       </div>

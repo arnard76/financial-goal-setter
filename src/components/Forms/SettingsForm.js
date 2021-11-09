@@ -1,5 +1,5 @@
 import React, { createRef, useState } from "react";
-import FormGroup from "../FormGroup";
+import FormGroup from "../FormGroup2";
 import Message from "../Message";
 
 export default function SettingsForm(props) {
@@ -22,28 +22,27 @@ export default function SettingsForm(props) {
   return (
     <>
       <form className="flex flex-col">
+        <FormGroup prefix="Wage" postfix="Salary" label="Income Type">
+          <input className="form-input" type="checkbox" ref={incomeTypeRef} />
+        </FormGroup>
         <FormGroup
-          type="checkbox"
-          prefix="Wage"
-          postfix="Salary"
-          label="Income Type"
-          ref={incomeTypeRef}
-        />
-        <FormGroup
-          type="number"
           prefix="$"
           postfix={props.currentCurrency}
           label="Hourly Wage"
-        />
+        >
+          <input className="form-input" type="number" />
+        </FormGroup>
         <FormGroup
-          type="number"
           prefix="$"
           postfix={props.currentCurrency}
           label="Yearly Salary"
-        />
-        <div disabled={loading} onClick={handleSubmit} className="button">
+        >
+          <input className="form-input" type="number" />
+        </FormGroup>
+
+        <button disabled={loading} onClick={handleSubmit} className="button">
           Update Settings
-        </div>
+        </button>
       </form>
       {error && <Message type="error" message={error} />}
       {message && <Message message={message} />}

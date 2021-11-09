@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import FormGroup from "../FormGroup";
+import FormGroup from "../FormGroup2";
 import Message from "../Message";
 
 export default function PasswordReset() {
@@ -37,15 +37,18 @@ export default function PasswordReset() {
           Reset your password
         </h2>
         <form className="flex flex-col">
-          <FormGroup
-            type="email"
-            label="Email"
-            required={true}
-            ref={emailRef}
-          />
-          <div disabled={loading} onClick={handleSubmit} className="button">
+          <FormGroup label="Email">
+            <input
+              className="form-input"
+              placeholder="Please input your email address"
+              type="email"
+              required
+              ref={emailRef}
+            />
+          </FormGroup>
+          <button disabled={loading} onClick={handleSubmit} className="button">
             Send password reset email
-          </div>
+          </button>
         </form>
         {error && <Message type="error" message={error} />}
         {message && <Message message={message} />}

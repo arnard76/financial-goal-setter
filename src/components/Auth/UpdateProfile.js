@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import FormGroup from "../FormGroup";
+import FormGroup from "../FormGroup2";
 import Message from "../Message";
 
 export default function UpdateProfile() {
@@ -57,30 +57,36 @@ export default function UpdateProfile() {
           Update Profile
         </h2>
         <form className="flex flex-col">
-          <FormGroup
-            type="email"
-            label="Email"
-            required={true}
-            ref={emailRef}
-            defaultValue={currentUser.email}
-          />
-          <FormGroup
-            type="password"
-            label="Password"
-            required={true}
-            ref={passwordRef}
-            placeholder="Leave blank to keep the same"
-          />
-          <FormGroup
-            type="password"
-            label="Confirm password"
-            required={true}
-            ref={passwordConfirmRef}
-            placeholder="Leave blank to keep the same"
-          />
-          <div disabled={loading} onClick={handleSubmit} className="button">
+          <FormGroup label="Email">
+            <input
+              className="form-input"
+              type="email"
+              required
+              ref={emailRef}
+              defaultValue={currentUser.email}
+            />
+          </FormGroup>
+          <FormGroup label="Password">
+            <input
+              className="form-input"
+              type="password"
+              required
+              ref={passwordRef}
+              placeholder="Leave blank to keep the same"
+            />
+          </FormGroup>
+          <FormGroup label="Confirm password">
+            <input
+              className="form-input"
+              type="password"
+              required
+              ref={passwordConfirmRef}
+              placeholder="Leave blank to keep the same"
+            />
+          </FormGroup>
+          <button disabled={loading} onClick={handleSubmit} className="button">
             Update Profile
-          </div>
+          </button>
         </form>
         {error && <Message type="error" message={error} />}
       </div>

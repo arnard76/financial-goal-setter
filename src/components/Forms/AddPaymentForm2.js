@@ -2,7 +2,7 @@ import React, { createRef, useState } from "react";
 
 // project components
 import Message from "../Message";
-import FormGroup2 from "../FormGroup2";
+import FormGroup from "../FormGroup2";
 
 import { usePayments } from "../../contexts/PaymentContext";
 
@@ -34,13 +34,15 @@ export default function AddPaymentForm({ refreshPayments }) {
 
     // verify input data here
 
-    await addPayment({
+    let message = await addPayment({
       name: paymentNameRef.current.value,
       type: paymentType,
       value: parseFloat(paymentValueRef.current.value),
       "frequency count": parseInt(paymentFrequencyCountRef.current.value),
       "frequency period": paymentFrequencyPeriodRef.current.value,
     });
+
+    console.log(message);
 
     // await addDoc(collection(db, "payments"), {
     //   Name: paymentNameRef.current.value,
@@ -63,7 +65,7 @@ export default function AddPaymentForm({ refreshPayments }) {
   return (
     <>
       <form className="flex flex-col">
-        <FormGroup2 label="Name">
+        <FormGroup label="Name">
           <input
             placeholder="Coffee,Haircut,Mortgage ..."
             type="text"
@@ -71,8 +73,8 @@ export default function AddPaymentForm({ refreshPayments }) {
             ref={paymentNameRef}
             required
           />
-        </FormGroup2>
-        <FormGroup2 label="Value" prefix="$" postfix="USD">
+        </FormGroup>
+        <FormGroup label="Value" prefix="$" postfix="USD">
           <input
             type="number"
             placeholder="How much money?"
@@ -81,8 +83,8 @@ export default function AddPaymentForm({ refreshPayments }) {
             ref={paymentValueRef}
             className=" form-input-small"
           />
-        </FormGroup2>
-        <FormGroup2 label="Type">
+        </FormGroup>
+        <FormGroup label="Type">
           <select
             type="select"
             defaultValue="Continuous"
@@ -97,8 +99,8 @@ export default function AddPaymentForm({ refreshPayments }) {
             <option>Repeated</option>
             <option>One-off</option>
           </select>
-        </FormGroup2>
-        <FormGroup2 label="Frequency">
+        </FormGroup>
+        <FormGroup label="Frequency">
           <input
             type="number"
             placeholder="How much money?"
@@ -123,34 +125,34 @@ export default function AddPaymentForm({ refreshPayments }) {
             <option>month</option>
             <option>year</option>
           </select>
-        </FormGroup2>
+        </FormGroup>
 
         {paymentType !== "Continuous" ? (
           <>
-            <FormGroup2 label="Start">
+            <FormGroup label="Start">
               <input
                 type="date"
                 required
                 className="form-input"
                 defaultValue={present}
               />
-            </FormGroup2>
-            <FormGroup2 label="End">
+            </FormGroup>
+            <FormGroup label="End">
               <input
                 type="date"
                 required
                 className="form-input"
                 defaultValue={date}
               />
-            </FormGroup2>
+            </FormGroup>
           </>
         ) : (
           <></>
         )}
 
-        <div disabled={loading} onClick={handleSubmit} className="button">
+        <button disabled={loading} onClick={handleSubmit} className="button">
           Add Payment
-        </div>
+        </button>
       </form>
       {error && <Message type="error" message={error} />}
       {message && <Message message={message} />}
