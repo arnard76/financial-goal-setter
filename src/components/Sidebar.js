@@ -30,7 +30,7 @@ export default function Sidebar(props) {
   }
 
   return (
-    <div className="h-screen flex">
+    <div className="h-screen flex" onClick={() => props.refreshPayments()}>
       {/* NAV */}
       <nav className="relative flex flex-col justify-around p-4  bg-gray-200 dark:bg-gray-900">
         <div

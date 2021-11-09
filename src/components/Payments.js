@@ -1,5 +1,17 @@
 import React, { useState } from "react";
-import Payment, { PaymentMenu } from "./Payment";
+import Payment from "./Payment";
+
+export function PaymentMenu(props) {
+  return (
+    <div className="overflow-hidden p-4 bg-gray-100 dark:text-white dark:bg-gray-800 w-72">
+      <p>Notes: {props.notes}</p>
+      <p>Start: {props.start}</p>
+      <p>End: {props.end}</p>
+      <div className="button mt-4">Edit</div>
+      <div className="button bg-red-800 hover:bg-red-900">Delete</div>
+    </div>
+  );
+}
 
 export default function Payments({ payments }) {
   const [activePayment, setActivePayment] = useState({ id: null });
@@ -29,7 +41,7 @@ export default function Payments({ payments }) {
   // const { id, notes, name, value, frequency, start, end } = examplePayment;
 
   function handleActivatePayment(payment) {
-    console.log("check", payment);
+    // console.log("check", payment);
     if (activePayment.id === payment.id) {
       setActivePayment({ id: null });
     } else {
@@ -39,13 +51,12 @@ export default function Payments({ payments }) {
 
   return (
     <>
-      <div className="flex flex-1">
-        <div className="flex-1 p-4 h-screen overflow-y-auto bg-white dark:bg-gray-900">
-          <strong className=" text-xl text-center text-gray-900 dark:text-white">
+      <div className="flex flex-1 ">
+        <div className="relative  flex-1 p-4 h-screen overflow-y-auto bg-white dark:bg-gray-900 z-10">
+          <strong className="relative z-10 text-xl text-center text-gray-900 dark:text-white">
             <h1>What does your financial goal look like?</h1>
           </strong>
-          {examplePayments.map((payment) => {
-            // console.log(payment);
+          {payments.map((payment) => {
             return (
               <Payment
                 onClick={() => handleActivatePayment(payment)}
@@ -57,6 +68,12 @@ export default function Payments({ payments }) {
               />
             );
           })}
+          <div
+            onClick={(e) => {
+              handleActivatePayment(activePayment);
+            }}
+            className="  absolute top-0 bottom-0 right-0 left-0 z-0"
+          ></div>
         </div>
         {activePayment.id && (
           <PaymentMenu
