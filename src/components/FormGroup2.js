@@ -4,7 +4,7 @@ export default function FormGroup(props) {
   return (
     <div className="mb-5">
       {props.label && (
-        <label className="dark:text-white text-black">{props.label}</label>
+        <label className="dark:text-white text-black mb-1">{props.label}</label>
       )}
 
       <div className="flex items-center">
