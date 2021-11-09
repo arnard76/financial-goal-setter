@@ -4,12 +4,9 @@ import React, { createRef, useState } from "react";
 import Message from "../Message";
 import FormGroup2 from "../FormGroup2";
 
-// firebase imports
-import { collection, addDoc } from "firebase/firestore";
-import { db } from "../../firebase";
-import { onAuthStateChanged } from "firebase/auth";
+import { usePayments } from "../../contexts/PaymentContext";
 
-export default function AddPaymentForm({ fetchPayments }) {
+export default function AddPaymentForm({ refreshPayments }) {
   // to control form inputs/actions
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -22,6 +19,8 @@ export default function AddPaymentForm({ fetchPayments }) {
   const paymentFrequencyCountRef = createRef();
   const paymentFrequencyPeriodRef = createRef();
 
+  const { addPayment } = usePayments();
+
   var date = new Date();
   var present =
     date.getDay() + 1 + "-" + date.getMonth() + "-" + date.getFullYear();
@@ -33,30 +32,31 @@ export default function AddPaymentForm({ fetchPayments }) {
     setError("");
     setMessage("");
 
-    // verify input data
+    // verify input data here
 
-    console.log(
-      "payment amount: ",
-      typeof paymentValueRef.current.value,
-      "   ",
-      paymentValueRef
-    );
-
-    await addDoc(collection(db, "payments"), {
-      Name: paymentNameRef.current.value,
-      Type: paymentType,
-      User: "xPgTU8nHX2bIjEC2gVsAf3kHBLo1",
-      Value: parseFloat(paymentValueRef.current.value),
-      "Frequency Count": parseInt(paymentFrequencyCountRef.current.value),
-      "Frequency Period": paymentFrequencyPeriodRef.current.value,
+    await addPayment({
+      name: paymentNameRef.current.value,
+      type: paymentType,
+      value: parseFloat(paymentValueRef.current.value),
+      "frequency count": parseInt(paymentFrequencyCountRef.current.value),
+      "frequency period": paymentFrequencyPeriodRef.current.value,
     });
+
+    // await addDoc(collection(db, "payments"), {
+    //   Name: paymentNameRef.current.value,
+    //   Type: paymentType,
+    //   User: "xPgTU8nHX2bIjEC2gVsAf3kHBLo1",
+    //   Value: parseFloat(paymentValueRef.current.value),
+    //   "Frequency Count": parseInt(paymentFrequencyCountRef.current.value),
+    //   "Frequency Period": paymentFrequencyPeriodRef.current.value,
+    // });
 
     //   .catch((error) => {
     //     console.log(error);
     //     setError(error);
     //   })
     //   .then(console.log("Document written with ID: ", docRef.id));
-    fetchPayments();
+
     setLoading(false);
   }
 

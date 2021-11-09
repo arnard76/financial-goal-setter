@@ -5,6 +5,8 @@ import AddPaymentForm from "./Forms/AddPaymentForm2";
 import SettingsForm from "./Forms/SettingsForm";
 import Tooltip from "./Tooltip";
 
+import { PaymentsProvider } from "../contexts/PaymentContext";
+
 export default function Sidebar(props) {
   function handleClickNavIcon(event, tabName) {
     var clickedIcon = event.currentTarget;
@@ -70,7 +72,9 @@ export default function Sidebar(props) {
         <strong className=" text-xl text-center my-2 text-gray-900 dark:text-white">
           <h1>Add a payment</h1>
         </strong>
-        <AddPaymentForm fetchPayments={props.fetchPayments} />
+        <PaymentsProvider>
+          <AddPaymentForm refreshPayments={props.refreshPayments} />
+        </PaymentsProvider>
       </div>
 
       {/* RESULTS TAB */}

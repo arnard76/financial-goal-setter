@@ -45,12 +45,43 @@ export default function Home() {
     });
   };
 
+  const getFrequencyMultiplier = (period = "month") => {
+    period = period.toLowerCase();
+    let multiplier;
+    if (period === "day") {
+      multiplier = 365;
+    } else if (period === "week") {
+      multiplier = 52;
+    } else if (period === "month") {
+      multiplier = 12;
+    } else if (period === "year") {
+      multiplier = 1;
+    }
+    return multiplier;
+  };
+
+  const calculateTotal = (payments) => {
+    let total = 0.0;
+    for (let index = 0; index < payments.length; index++) {
+      console.log(payments[index]);
+      total +=
+        payments[index].value *
+        payments[index]["frequency count"] *
+        getFrequencyMultiplier(payments[index]["frequency period"]);
+    }
+    setAnnualTotal(total);
+  };
+
   return (
     <div className="flex">
       <Sidebar
-        results={{ annualTotal: 5 }}
+        results={{ annualTotal: annualTotal }}
         settings={(userDetails, { currency: "NZD" })}
-        fetchPayments={fetchPayments}
+        // fetchPayments={fetchPayments}
+        refreshPayments={() => {
+          // fetchPayments();
+          // calculateTotal(payments);
+        }}
       />
       <Payments payments={payments} />
     </div>
