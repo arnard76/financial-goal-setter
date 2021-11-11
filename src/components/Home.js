@@ -1,23 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Sidebar from "./Sidebar";
 import Payments from "./Payments";
-
-import { db } from "../firebase";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { PaymentProvider } from "../contexts/PaymentContext";
+import { query, where, onSnapshot, collection } from "@firebase/firestore";
 import { useAuth } from "../contexts/AuthContext";
+import { db } from "../firebase";
 
 export default function Home() {
   const [payments, setPayments] = useState([]);
   const [userDetails, setUserDetails] = useState();
   const { currentUser } = useAuth();
-
-  const fetchUserDetails = async () => {
+  async function fetchUserDetails() {
     const q = query(
       collection(db, "user-details"),
-      where("User", "==", currentUser.uid)
+      where("user", "==", currentUser.uid)
     );
 
-    const querySnapshot = await getDocs(q);
+    const querySnapshot = await onSnapshot(q);
     querySnapshot.forEach((doc) => {
       // doc.data() is never undefined for query doc snapshots
       console.log(doc.id, " => ", doc.data());
@@ -74,16 +73,10 @@ export default function Home() {
 
   return (
     <div className="flex">
-      <Sidebar
-        results={{ annualTotal: annualTotal }}
-        settings={(userDetails, { currency: "NZD" })}
-        // fetchPayments={fetchPayments}
-        refreshPayments={() => {
-          // fetchPayments();
-          // calculateTotal(payments);
-        }}
-      />
-      <Payments payments={payments} />
+      <PaymentProvider>
+        <Sidebar settings={{ currency: "NZD" }} />
+        <Payments />
+      </PaymentProvider>
     </div>
   );
 }

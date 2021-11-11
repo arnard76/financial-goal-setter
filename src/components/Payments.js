@@ -1,19 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Payment from "./Payment";
+import { usePayments } from "../contexts/PaymentContext";
 
 export function PaymentMenu(props) {
+  const { deletePayment } = usePayments();
+  const { id, name, notes, start, end, type, date } = props.payment;
   return (
     <div className="overflow-hidden p-4 bg-gray-100 dark:text-white dark:bg-gray-800 w-72">
-      <p>Notes: {props.notes}</p>
-      <p>Start: {props.start}</p>
-      <p>End: {props.end}</p>
+      <p className="text-2xl">{name}</p>
+      <p>Notes: {notes}</p>
       <div className="button mt-4">Edit</div>
-      <div className="button bg-red-800 hover:bg-red-900">Delete</div>
+      <div
+        className="button bg-red-800 hover:bg-red-900"
+        onClick={() => {
+          props.togglePayment(props.payment);
+          deletePayment(id);
+        }}
+      >
+        Delete
+      </div>
     </div>
   );
 }
 
-export default function Payments({ payments }) {
+  // let getPayments, calcTotal, payments, annualTotal;
+  const { getPayments, payments } = usePayments();
   const [activePayment, setActivePayment] = useState({ id: null });
   const examplePayments = [
     {
@@ -37,8 +48,7 @@ export default function Payments({ payments }) {
       end: Date.UTC(9999, 12, 31),
     },
   ];
-
-  // const { id, notes, name, value, frequency, start, end } = examplePayment;
+  const { getPayments, payments } = usePayments();
 
   function handleActivatePayment(payment) {
     // console.log("check", payment);
@@ -48,6 +58,13 @@ export default function Payments({ payments }) {
       setActivePayment(payment);
     }
   }
+
+  useEffect(() => {
+    let unsubscribe = getPayments();
+    return () => {
+      unsubscribe = false;
+    };
+  }, []);
 
   return (
     <>
