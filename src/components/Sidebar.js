@@ -82,7 +82,12 @@ export default function Sidebar(props) {
           <h1>Financial Goals</h1>
         </strong>
         <p>
-          Annual total: ${props.results.annualTotal} {props.settings.currency}
+          Annual total: ${props.results.annualTotal.toFixed(2)}{" "}
+          {props.settings.currency}
+        </p>
+        <p>
+          Weekly average: ${props.results.weeklyEstimate.toFixed(2)}{" "}
+          {props.settings.currency}
         </p>
       </div>
 
