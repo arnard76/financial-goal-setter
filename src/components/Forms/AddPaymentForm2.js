@@ -34,7 +34,6 @@ export default function AddPaymentForm({ currency }) {
     setLoading(true);
     setError("");
     setMessage("");
-    // verify input data here
 
 
     let [success, message] = await addPayment(inputValues);
@@ -182,8 +181,6 @@ export default function AddPaymentForm({ currency }) {
               <input
                 type="date"
                 className="form-input"
-            )}
-          </>
                 value={inputValues.start}
                 onChange={(event) => {
                   setInputValues({

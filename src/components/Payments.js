@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Payment from "./Payment";
 import { usePayments } from "../contexts/PaymentContext";
 
@@ -23,32 +23,8 @@ export function PaymentMenu(props) {
   );
 }
 
-  // let getPayments, calcTotal, payments, annualTotal;
-  const { getPayments, payments } = usePayments();
+export default function Payments({ payments }) {
   const [activePayment, setActivePayment] = useState({ id: null });
-  const examplePayments = [
-    {
-      id: "TNrc4oq57VAvNK72vtUD",
-      notes: "In newmarket, with student discount :)",
-      name: "Haircut",
-      value: 15,
-      "frequency count": 1,
-      "frequency period": "month",
-      start: Date.UTC(1000, 1, 1),
-      end: Date.UTC(9999, 12, 31),
-    },
-    {
-      id: "TNrc4oq57VAvNK72vtUE",
-      notes: "Delivered from countdown",
-      name: "Groceries",
-      value: 200,
-      "frequency count": 4,
-      "frequency period": "month",
-      start: Date.UTC(1000, 1, 1),
-      end: Date.UTC(9999, 12, 31),
-    },
-  ];
-  const { getPayments, payments } = usePayments();
 
   function handleActivatePayment(payment) {
     // console.log("check", payment);
@@ -58,13 +34,6 @@ export function PaymentMenu(props) {
       setActivePayment(payment);
     }
   }
-
-  useEffect(() => {
-    let unsubscribe = getPayments();
-    return () => {
-      unsubscribe = false;
-    };
-  }, []);
 
   return (
     <>
