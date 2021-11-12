@@ -33,18 +33,24 @@ export function PaymentProvider({ children }) {
   const [annualTotal, setAnnualTotal] = useState(0);
 
   function validatePayment(payment) {
+    // payment has a name
     if (payment.name.length === 0) {
       return [0, "payment name value is blank"];
     }
 
+    // frequency type is continuous, repeated or one-off
     if (
       payment.type !== "Continuous" &&
       payment.type !== "Repeated" &&
       payment.type !== "One-off"
     ) {
-      return [0, "payment type is invalid" + payment.type];
+      return [
+        0,
+        "Payment type invalid, contact arnard76@gmail.com  " + payment.type,
+      ];
     }
 
+    // frequency period is one of the day,week,month or year
     if (
       payment["frequency period"] !== "day" &&
       payment["frequency period"] !== "week" &&
@@ -57,14 +63,16 @@ export function PaymentProvider({ children }) {
       ];
     }
 
+    // frequency count is integer
     if (payment["frequency count"] % 1 !== 0) {
-      return [
-        0,
-        "payment frequency count must be an integer: " +
-          payment["frequency count"],
-      ];
+      return [0, "Payment must occur a whole number of times"];
     }
 
+    // frequency count is at least one
+    if (payment["frequency count"] < 1) {
+      return [0, "Payment must occur at least once"];
+    }
+    console.log(payment);
     return [1, "Payment is valid"];
   }
 
@@ -90,6 +98,7 @@ export function PaymentProvider({ children }) {
   }
 
   async function addPayment(payment) {
+    // validate payment data
     let [valid, message] = validatePayment(payment);
     if (!valid) {
       return [0, message];

@@ -32,7 +32,7 @@ export default function Sidebar(props) {
   }
 
   return (
-    <div className="h-screen flex" onClick={() => props.refreshPayments()}>
+    <div className="h-screen flex">
       {/* NAV */}
       <nav className="relative flex flex-col justify-around p-4  bg-gray-200 dark:bg-gray-900">
         <div
@@ -72,9 +72,8 @@ export default function Sidebar(props) {
         <strong className=" text-xl text-center my-2 text-gray-900 dark:text-white">
           <h1>Add a payment</h1>
         </strong>
-        <PaymentsProvider>
-          <AddPaymentForm refreshPayments={props.refreshPayments} />
-        </PaymentsProvider>
+
+        <AddPaymentForm currency={props.settings.currency} />
       </div>
 
       {/* RESULTS TAB */}
