@@ -36,7 +36,7 @@ export default function Sidebar(props) {
       {/* NAV */}
       <nav className="relative flex flex-col justify-around p-4  bg-gray-200 dark:bg-gray-900">
         <div
-          className="button nav-icon"
+          className="button nav-icon group"
           onClick={(event) => handleClickNavIcon(event, "add")}
         >
           <i
@@ -46,7 +46,7 @@ export default function Sidebar(props) {
           <Tooltip text="Add" />
         </div>
         <div
-          className="button nav-icon"
+          className="button nav-icon group"
           onClick={(event) => handleClickNavIcon(event, "analysis")}
         >
           <i className="fa fa-file-text fa-2x " aria-hidden="true"></i>
@@ -61,7 +61,7 @@ export default function Sidebar(props) {
           <Tooltip text="Income" />
         </div>
 
-        <Link to="/profile" className="button nav-icon">
+        <Link to="/profile" className="button nav-icon group">
           <i className="fa fa-user fa-2x" aria-hidden="true"></i>
           <Tooltip text="Profile" />
         </Link>
