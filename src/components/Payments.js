@@ -9,6 +9,32 @@ export function PaymentMenu(props) {
     <div className="overflow-hidden p-4 bg-gray-100 dark:text-white dark:bg-gray-800 w-72">
       <p className="text-2xl">{name}</p>
       <p>Notes: {notes}</p>
+      {type === "Repeated" ? (
+        <>
+          <p>
+            Frequency: {props.payment["frequency count"]} {" times a "}{" "}
+            {props.payment["frequency period"]}
+          </p>
+          <p>Start: {start}</p>
+          <p>End: {end}</p>
+        </>
+      ) : (
+        <>
+          {type === "Continuous" ? (
+            <>
+              <p>
+                Frequency: {props.payment["frequency count"]} {" times a "}{" "}
+                {props.payment["frequency period"]}
+              </p>
+            </>
+          ) : (
+            <>
+              <p>Date: {date}</p>
+            </>
+          )}
+        </>
+      )}
+
       <div className="button mt-4">Edit</div>
       <div
         className="button bg-red-800 hover:bg-red-900"
@@ -63,12 +89,8 @@ export default function Payments({ payments }) {
         </div>
         {activePayment.id && (
           <PaymentMenu
-            notes={activePayment.notes}
-            name={activePayment.name}
-            value={activePayment.value}
-            frequency={activePayment.frequency}
-            start={activePayment.start}
-            end={activePayment.end}
+            payment={activePayment}
+            togglePayment={handleActivatePayment}
           />
         )}
       </div>

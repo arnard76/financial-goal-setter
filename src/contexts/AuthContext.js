@@ -1,5 +1,4 @@
 import React, { useContext, useState, useEffect } from "react";
-// import app from "../firebase";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,

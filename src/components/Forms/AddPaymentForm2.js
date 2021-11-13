@@ -11,7 +11,7 @@ export default function AddPaymentForm({ currency }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
-  
+
   // to store form inputs/default inputs
   let date = new Date();
   const initialInputValues = {
@@ -35,9 +35,13 @@ export default function AddPaymentForm({ currency }) {
     setError("");
     setMessage("");
 
+    // remove undefined keys from payment obj
+    // so if continuous payment, date, end,start are not added to db
+    Object.keys(inputValues).forEach((key) =>
+      inputValues[key] === undefined ? delete inputValues[key] : {}
+    );
 
     let [success, message] = await addPayment(inputValues);
-    console.log(success, message);
     if (success) {
       setInputValues(initialInputValues);
       setMessage(message);
@@ -131,44 +135,44 @@ export default function AddPaymentForm({ currency }) {
         {inputValues.type === "Continuous" ||
         inputValues.type === "Repeated" ? (
           <>
-        <FormGroup label="Frequency">
-          <input
-            type="number"
-            step={1}
+            <FormGroup label="Frequency">
+              <input
+                type="number"
+                step={1}
                 min={1}
-            value={inputValues["frequency count"]}
-            onChange={(event) => {
+                value={inputValues["frequency count"]}
+                onChange={(event) => {
                   if (parseInt(event.target.value) === 0) {
                     event.target.value = 1;
                   }
-              setInputValues({
-                ...inputValues,
+                  setInputValues({
+                    ...inputValues,
                     "frequency count": parseInt(event.target.value),
-              });
-            }}
-            className=" form-input-small"
-          />
-          <p className=" text-black dark:text-white w-full text-center">
-            {" "}
-            times a{" "}
-          </p>
-          <select
-            type="select"
-            value={inputValues["frequency period"]}
-            className="form-input"
-            onChange={(event) => {
-              setInputValues({
-                ...inputValues,
-                "frequency period": event.target.value,
-              });
-            }}
-          >
-            <option>day</option>
-            <option>week</option>
-            <option>month</option>
-            <option>year</option>
-          </select>
-        </FormGroup>
+                  });
+                }}
+                className=" form-input-small"
+              />
+              <p className=" text-black dark:text-white w-full text-center">
+                {" "}
+                times a{" "}
+              </p>
+              <select
+                type="select"
+                value={inputValues["frequency period"]}
+                className="form-input"
+                onChange={(event) => {
+                  setInputValues({
+                    ...inputValues,
+                    "frequency period": event.target.value,
+                  });
+                }}
+              >
+                <option>day</option>
+                <option>week</option>
+                <option>month</option>
+                <option>year</option>
+              </select>
+            </FormGroup>
           </>
         ) : (
           <></>
@@ -221,7 +225,7 @@ export default function AddPaymentForm({ currency }) {
                 />
               </FormGroup>
             ) : (
-          <></>
+              <></>
             )}
           </>
         )}

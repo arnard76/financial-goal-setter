@@ -5,8 +5,6 @@ import AddPaymentForm from "./Forms/AddPaymentForm2";
 import SettingsForm from "./Forms/SettingsForm";
 import Tooltip from "./Tooltip";
 
-import { usePayments } from "../contexts/PaymentContext";
-
 export default function Sidebar(props) {
   function handleClickNavIcon(event, tabName) {
     var clickedIcon = event.currentTarget;

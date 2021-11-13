@@ -72,7 +72,6 @@ export function PaymentProvider({ children }) {
     if (payment["frequency count"] < 1) {
       return [0, "Payment must occur at least once"];
     }
-    console.log(payment);
     return [1, "Payment is valid"];
   }
 
@@ -105,10 +104,7 @@ export function PaymentProvider({ children }) {
     }
 
     try {
-      // validate payment data
-
       // add data to firestore db
-
       await addDoc(collection(db, "payments"), {
         ...payment,
         user: currentUser.uid,
@@ -161,21 +157,16 @@ export function PaymentProvider({ children }) {
   };
 
   function calcTotal(payments) {
-    // has access to payments variable
-    console.log(
-      "I wil calculate the total value of all these payments ",
-      payments
-    );
-
     let total = 0.0;
+
     for (let index = 0; index < payments.length; index++) {
-      console.log(payments[index]);
-      total +=
-        payments[index].value *
-        payments[index]["frequency count"] *
-        getFrequencyMultiplier(payments[index]["frequency period"]);
+      if (payments[index].type === "Continuous") {
+        total +=
+          payments[index].value *
+          payments[index]["frequency count"] *
+          getFrequencyMultiplier(payments[index]["frequency period"]);
+      }
     }
-    console.log(total);
     setAnnualTotal(total);
   }
 

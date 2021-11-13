@@ -1,5 +1,6 @@
 import Home from "./Home";
 import Check from "./Check";
+import { PaymentProvider } from "../contexts/PaymentContext";
 
 // User Authentication stuff
 import SignUp from "./Auth/SignUp";
@@ -36,18 +37,20 @@ function App() {
     <>
       <BrowserRouter>
         <AuthProvider>
-          <Switch>
-            <PrivateRoute exact path="/" component={Home} />
-            <PrivateRoute path="/check" component={Check} />
+          <PaymentProvider>
+            <Switch>
+              <PrivateRoute exact path="/" component={Home} />
+              <PrivateRoute path="/check" component={Check} />
 
-            {/* All auth paths */}
-            <Route path="/signup" component={AuthApp} />
-            <Route path="/login" component={AuthApp} />
-            <Route path="/forgot-password" component={AuthApp} />
+              {/* All auth paths */}
+              <Route path="/signup" component={AuthApp} />
+              <Route path="/login" component={AuthApp} />
+              <Route path="/forgot-password" component={AuthApp} />
 
-            <PrivateRoute path="/profile" component={AuthApp} />
-            <PrivateRoute path="/update-profile" component={AuthApp} />
-          </Switch>
+              <PrivateRoute path="/profile" component={AuthApp} />
+              <PrivateRoute path="/update-profile" component={AuthApp} />
+            </Switch>
+          </PaymentProvider>
         </AuthProvider>
       </BrowserRouter>
     </>

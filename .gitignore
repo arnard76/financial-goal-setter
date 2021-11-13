@@ -21,3 +21,4 @@
 npm-debug.log*
 firebase-debug.log
 .firebase/hosting.YnVpbGQ.cache
+.github/workflows/og_workflow.yml.txt
