@@ -4,11 +4,13 @@
 
 @layer components {
   .form-input {
-    @apply w-full p-2 rounded-md outline-none border-2 border-transparent focus:border-blue-500;
+    @apply w-full py-2  outline-none border-2 focus:rounded-md focus:border-blue-500 dark:bg-gray-850 bg-gray-50 dark:text-white text-gray-900 transition-all duration-200;
+    border-color: transparent transparent rgb(59, 130, 246) transparent;
   }
 
   .form-input-small {
-    @apply w-24 p-2 rounded-md outline-none border-2 border-transparent focus:border-blue-500;
+    @apply w-24 py-2  outline-none border-2 focus:rounded-md focus:border-blue-500 dark:bg-gray-850 bg-gray-50 dark:text-white text-gray-900 transition-all duration-200 text-center;
+    border-color: transparent transparent rgb(59, 130, 246) transparent;
   }
 
   .button {
@@ -20,7 +22,7 @@
   }
 
   .nav-tab {
-    @apply hidden flex-col  bg-gray-100 dark:bg-gray-800 p-4 overflow-y-auto w-72;
+    @apply hidden flex-col  bg-gray-100 dark:bg-gray-800 p-4 overflow-y-auto w-80;
   }
 
   .nav-tab.active {
