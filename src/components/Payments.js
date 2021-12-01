@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Payment from "./Payment";
 import { usePayments } from "../contexts/PaymentContext";
+import EditPaymentForm from "./Forms/EditPaymentForm";
 
 export function PaymentMenu(props) {
   const { deletePayment } = usePayments();
@@ -35,7 +36,14 @@ export function PaymentMenu(props) {
         </>
       )}
 
-      <div className="button mt-4">Edit</div>
+      <div
+        className="button mt-4"
+        onClick={() => {
+          props.editPayment(props.payment);
+        }}
+      >
+        Edit
+      </div>
       <div
         className="button bg-red-800 hover:bg-red-900"
         onClick={() => {
@@ -51,6 +59,7 @@ export function PaymentMenu(props) {
 
 export default function Payments({ payments, settings, annualTotal }) {
   const [activePayment, setActivePayment] = useState({ id: null });
+  const [editingPayment, setEditingPayment] = useState({ id: null });
 
   function handleActivatePayment(payment) {
     // console.log("check", payment);
@@ -58,6 +67,14 @@ export default function Payments({ payments, settings, annualTotal }) {
       setActivePayment({ id: null });
     } else {
       setActivePayment(payment);
+    }
+  }
+
+  function handleEditPayment(payment) {
+    if (editingPayment.id === payment.id) {
+      setEditingPayment({ id: null });
+    } else {
+      setEditingPayment(payment);
     }
   }
 
@@ -136,11 +153,31 @@ export default function Payments({ payments, settings, annualTotal }) {
             className="  absolute top-0 bottom-0 right-0 left-0 z-0"
           ></div>
         </div>
-        {activePayment.id && (
+        {activePayment.id && !editingPayment.id && (
           <PaymentMenu
             payment={activePayment}
             togglePayment={handleActivatePayment}
+            editPayment={handleEditPayment}
           />
+        )}
+        {/* EDIT TAB */}
+
+        {editingPayment.id && (
+          <div
+            id="edit-tab"
+            className={`nav-tab ${editingPayment.id && "active"}`}
+          >
+            <h1 className="relative z-10 text-xl text-center text-gray-900 dark:text-white font-bold">
+              Edit {editingPayment.name} payment
+            </h1>
+
+            <EditPaymentForm
+              payment={editingPayment}
+              goBack={() => {
+                handleEditPayment(editingPayment);
+              }}
+            />
+          </div>
         )}
       </div>
     </>

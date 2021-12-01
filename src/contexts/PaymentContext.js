@@ -5,6 +5,7 @@ import { useAuth } from "./AuthContext";
 import {
   collection,
   addDoc,
+  updateDoc,
   onSnapshot,
   query,
   where,
@@ -158,6 +159,44 @@ export function PaymentProvider({ children }) {
     }
   }
 
+  async function editPayment(paymentId, payment) {
+    // validate payment data
+    let [valid, message] = validatePayment(payment);
+    if (!valid) {
+      return [0, message];
+    }
+
+    // remove unused fields so db is clean
+    // remove undefined keys from payment obj
+    // so if continuous payment, date, end,start are not added to db
+    Object.keys(payment).forEach((key) => {
+      // payment[key] === undefined ? delete payment[key] : {}
+      if (payment.type === "Continuous") {
+        delete payment.date;
+        delete payment.end;
+        delete payment.start;
+      } else if (payment.type === "One-off") {
+        delete payment.frequency;
+        delete payment.end;
+        delete payment.start;
+      } else if (payment.type === "Repeated") {
+        delete payment.date;
+      }
+      console.log(payment);
+    });
+
+    try {
+      // add data to firestore db
+      await updateDoc(doc(db, "payments", paymentId), {
+        ...payment,
+      });
+      return [1, payment.name + " has been updated"];
+    } catch (err) {
+      console.log(err);
+      return [0, err];
+    }
+  }
+
   async function deletePayment(paymentId) {
     // console.log("I promise I will delete payment ", paymentId);
     try {
@@ -168,19 +207,6 @@ export function PaymentProvider({ children }) {
       console.log(err);
       return [0, err];
     }
-  }
-
-  async function editPayment(paymentId, newPayment) {
-    console.log(
-      "I promise I will update payment ",
-      paymentId,
-      " to ",
-      newPayment
-    );
-    console.log(
-      "is this a valid payment object: ",
-      validatePayment(newPayment)
-    );
   }
 
   function getFrequencyMultiplier(period = "month") {

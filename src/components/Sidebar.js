@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import AddPaymentForm from "./Forms/AddPaymentForm2";
+import EditPaymentForm from "./Forms/EditPaymentForm";
 import PeriodConfigForm from "./Forms/SettingsForm";
 import Tooltip from "./Tooltip";
 
