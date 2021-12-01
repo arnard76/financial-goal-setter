@@ -74,6 +74,7 @@ export function PaymentProvider({ children }) {
 
     // frequency period is one of the day,week,month or year
     if (
+      payment.type != "One-off" &&
       payment.frequency[2] !== "day" &&
       payment.frequency[2] !== "week" &&
       payment.frequency[2] !== "month" &&
