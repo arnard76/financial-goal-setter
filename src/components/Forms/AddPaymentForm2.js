@@ -37,12 +37,6 @@ export default function AddPaymentForm() {
     setError("");
     setMessage("");
 
-    // remove undefined keys from payment obj
-    // so if continuous payment, date, end,start are not added to db
-    Object.keys(inputValues).forEach((key) =>
-      inputValues[key] === undefined ? delete inputValues[key] : {}
-    );
-
     let [success, message] = await addPayment(inputValues);
     if (success) {
       setInputValues(initialInputValues);

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useAuth } from "./AuthContext";
 
 //firebase imports
@@ -29,11 +29,9 @@ export function PaymentProvider({ children }) {
   // optional could put initial state of variable as arg of useState func
   const { currentUser } = useAuth();
 
+  const [loading, setLoading] = useState(true);
   const [payments, setPayments] = useState([]);
-  const [userDetails, setUserDetails] = useState({
-    "period start date": "[1,0,2000]",
-    "period end date": "[1,0,2020]",
-  });
+  const [userDetails, setUserDetails] = useState();
   const [annualTotal, setAnnualTotal] = useState(0);
 
   function getUserDetails() {
@@ -46,6 +44,7 @@ export function PaymentProvider({ children }) {
       (querySnapshot) => {
         querySnapshot.forEach((doc) => {
           setUserDetails(doc.data());
+          setLoading(false);
         });
       },
       (error) => {
@@ -95,6 +94,7 @@ export function PaymentProvider({ children }) {
     if (payment.frequency[0] < 1) {
       return [0, "Payment must occur at least once"];
     }
+
     return [1, "Payment is valid"];
   }
 
@@ -125,6 +125,25 @@ export function PaymentProvider({ children }) {
     if (!valid) {
       return [0, message];
     }
+
+    // remove unused fields so db is clean
+    // remove undefined keys from payment obj
+    // so if continuous payment, date, end,start are not added to db
+    Object.keys(payment).forEach((key) => {
+      // payment[key] === undefined ? delete payment[key] : {}
+      if (payment.type === "Continuous") {
+        delete payment.date;
+        delete payment.end;
+        delete payment.start;
+      } else if (payment.type === "One-off") {
+        delete payment.frequency;
+        delete payment.end;
+        delete payment.start;
+      } else if (payment.type === "Repeated") {
+        delete payment.date;
+      }
+      console.log(payment);
+    });
 
     try {
       // add data to firestore db
@@ -224,27 +243,44 @@ export function PaymentProvider({ children }) {
     console.log("start:", start, "   end:", end, "      diff", diff);
   }
 
+  // when page loads, gets a continuous snapshot of user details
+  useEffect(() => {
+    let unsubscribe = getPayments();
+    let unsubscribe2 = getUserDetails();
+    return () => {
+      unsubscribe();
+      unsubscribe2();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // calculate annual total when payments are changed/added/deleted
+  useEffect(() => {
+    calcTotal(payments);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [payments]);
+
   // all useful values/functions related to authentication
   const paymentDetails = {
-    getUserDetails,
     userDetails,
-
-    getPayments,
     payments,
 
     addPayment,
     deletePayment,
     editPayment,
 
-    calcTotal,
     annualTotal,
     calcOccurances,
   };
 
   return (
     // provides auth details to all of the children components
-    <PaymentContext.Provider value={paymentDetails}>
-      {children}
-    </PaymentContext.Provider>
+    <>
+      {!loading && (
+        <PaymentContext.Provider value={paymentDetails}>
+          {children}
+        </PaymentContext.Provider>
+      )}
+    </>
   );
 }

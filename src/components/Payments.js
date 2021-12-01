@@ -76,7 +76,6 @@ export default function Payments({ payments, settings, annualTotal }) {
     "December",
   ];
   let { periodStartDate, periodEndDate } = settings;
-  console.log(periodStartDate, periodEndDate);
   periodStartDate = new Date(
     periodStartDate[2],
     periodStartDate[1],
@@ -89,7 +88,6 @@ export default function Payments({ payments, settings, annualTotal }) {
     periodEndDate[0]
   );
 
-  console.log(periodStartDate, periodEndDate);
   return (
     <>
       <div className="flex flex-1 ">
