@@ -7,13 +7,22 @@ import Payments from "./Payments";
 import { usePayments } from "../contexts/PaymentContext";
 
 export default function Home() {
-  const { getPayments, payments, annualTotal, calcTotal } = usePayments();
+  const {
+    getUserDetails,
+    userDetails,
+    getPayments,
+    payments,
+    annualTotal,
+    calcTotal,
+  } = usePayments();
 
-  // when page loads, gets a continuous snapshot of payments
+  // when page loads, gets a continuous snapshot of user details
   useEffect(() => {
     let unsubscribe = getPayments();
+    let unsubscribe2 = getUserDetails();
     return () => {
       unsubscribe();
+      unsubscribe2();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -26,11 +35,16 @@ export default function Home() {
 
   return (
     <div className="flex">
-      <Sidebar
-        settings={{ currency: "NZD" }}
-        results={{ annualTotal: annualTotal, weeklyEstimate: annualTotal / 52 }}
+      <Sidebar />
+      <Payments
+        payments={payments}
+        settings={{
+          // periodStartDate: "12th December 2021",
+          periodStartDate: JSON.parse(userDetails["period start date"]),
+          periodEndDate: "12th December 2022",
+        }}
+        annualTotal={annualTotal}
       />
-      <Payments payments={payments} />
     </div>
   );
 }

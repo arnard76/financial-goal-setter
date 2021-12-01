@@ -53,33 +53,6 @@ export default function AddPaymentForm() {
     setLoading(false);
   }
 
-  // Returns the ISO week of the date.
-  Date.prototype.getWeek = function () {
-    var date = new Date(this.getTime());
-    date.setHours(0, 0, 0, 0);
-    // Thursday in current week decides the year.
-    date.setDate(date.getDate() + 3 - ((date.getDay() + 6) % 7));
-    // January 4 is always in week 1.
-    var week1 = new Date(date.getFullYear(), 0, 4);
-    // Adjust to Thursday in week 1 and count number of weeks from date to week1.
-    return (
-      1 +
-      Math.round(
-        ((date.getTime() - week1.getTime()) / 86400000 -
-          3 +
-          ((week1.getDay() + 6) % 7)) /
-          7
-      )
-    );
-  };
-
-  // Returns the four-digit year corresponding to the ISO week of the date.
-  Date.prototype.getWeekYear = function () {
-    var date = new Date(this.getTime());
-    date.setDate(date.getDate() + 3 - ((date.getDay() + 6) % 7));
-    return date.getFullYear();
-  };
-
   // handle type changing
   useEffect(() => {
     let typeInputs,
@@ -155,18 +128,40 @@ export default function AddPaymentForm() {
   }, [inputValues.frequency[2]]);
 
   // re-calc # of occurances when freq or end/start change
-  // useEffect(() => {
-  //   // split into array 0->year, 1->month, 2->date
-  //   let start = inputValues.start.split("-"),
-  //     end = inputValues.end.split("-"),
-  //     diff;
-  //   if (inputValues.frequency[2] === "day") {
-  //     start = new Date(start[0], start[1], start[2]);
-  //     end = new Date(end[0], end[1], end[2]);
-  //     diff = end - start; // in ms
-  //   }else if(inputValues.frequency[2] === "week")
-  //   console.log("start:", start, "   end:", end, "      diff", diff);
-  // }, [inputValues.start, inputValues.end, inputValues.frequency]);
+  const { calcOccurances } = usePayments();
+  useEffect(() => {
+    if (inputValues.type === "Repeated") {
+      calcOccurances(inputValues.frequency, inputValues.start, inputValues.end);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inputValues.start, inputValues.end, inputValues.frequency]);
+
+  // Returns the ISO week of the date.
+  Date.prototype.getWeek = function () {
+    var date = new Date(this.getTime());
+    date.setHours(0, 0, 0, 0);
+    // Thursday in current week decides the year.
+    date.setDate(date.getDate() + 3 - ((date.getDay() + 6) % 7));
+    // January 4 is always in week 1.
+    var week1 = new Date(date.getFullYear(), 0, 4);
+    // Adjust to Thursday in week 1 and count number of weeks from date to week1.
+    return (
+      1 +
+      Math.round(
+        ((date.getTime() - week1.getTime()) / 86400000 -
+          3 +
+          ((week1.getDay() + 6) % 7)) /
+          7
+      )
+    );
+  };
+
+  // Returns the four-digit year corresponding to the ISO week of the date.
+  Date.prototype.getWeekYear = function () {
+    var date = new Date(this.getTime());
+    date.setDate(date.getDate() + 3 - ((date.getDay() + 6) % 7));
+    return date.getFullYear();
+  };
 
   return (
     <>
@@ -193,7 +188,7 @@ export default function AddPaymentForm() {
             }}
           />
         </FormGroup>
-        <FormGroup label="Amount">
+        <FormGroup label="Amount" prefix="$">
           <input
             type="number"
             value={inputValues.amount}
@@ -227,7 +222,7 @@ export default function AddPaymentForm() {
             type="checkbox"
             className="ml-2"
             checked={inputValues.type === "One-off" ? true : false}
-            onClick={(e) => {
+            onChange={(e) => {
               // console.log("clicked", e.target.value);
               let type, tempType;
               if (inputValues.type === "One-off") {
@@ -332,12 +327,11 @@ export default function AddPaymentForm() {
         {/* IS REPEATED? */}
         {inputValues.type !== "One-off" ? (
           <FormGroup prefix="Will this payment stop after some time?">
-            {/* <label className="text-white">Yes</label> */}
             <input
               type="checkbox"
               className="ml-2"
               checked={inputValues.type === "Repeated" ? true : false}
-              onClick={(e) => {
+              onChange={(e) => {
                 let type;
                 if (inputValues.type === "Repeated") {
                   type = "Continuous";

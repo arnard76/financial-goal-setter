@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import AddPaymentForm from "./Forms/AddPaymentForm2";
-import SettingsForm from "./Forms/SettingsForm";
+import PeriodConfigForm from "./Forms/SettingsForm";
 import Tooltip from "./Tooltip";
 
 export default function Sidebar(props) {
@@ -37,26 +37,23 @@ export default function Sidebar(props) {
           className="button nav-icon group"
           onClick={(event) => handleClickNavIcon(event, "add")}
         >
-          <i
-            className="fa fa-plus fa-2x pointer-events-none"
-            aria-hidden="true"
-          ></i>
+          <i className="fa fa-plus fa-2x" aria-hidden="true"></i>
           <Tooltip text="Add" />
         </div>
-        <div
+        {/* <div
           className="button nav-icon group"
           onClick={(event) => handleClickNavIcon(event, "analysis")}
         >
           <i className="fa fa-file-text fa-2x " aria-hidden="true"></i>
           <Tooltip text="Analysis" />
-        </div>
+        </div> */}
         <div
           className="button nav-icon group"
-          onClick={(event) => handleClickNavIcon(event, "income")}
+          onClick={(event) => handleClickNavIcon(event, "settings")}
         >
           <i className="fa fa-cog fa-2x " aria-hidden="true"></i>
           {/* <p className="tooltip">Income</p> */}
-          <Tooltip text="Income" />
+          <Tooltip text="Settings" />
         </div>
 
         <Link to="/profile" className="button nav-icon group">
@@ -67,15 +64,15 @@ export default function Sidebar(props) {
 
       {/* ADD TAB */}
       <div id="add-tab" className="nav-tab">
-        <strong className=" text-xl text-center my-2 text-gray-900 dark:text-white">
-          <h1>Add a payment</h1>
-        </strong>
+        <h1 className="relative z-10 text-xl text-center text-gray-900 dark:text-white font-bold">
+          Add a payment
+        </h1>
 
-        <AddPaymentForm currency={props.settings.currency} />
+        <AddPaymentForm />
       </div>
 
       {/* RESULTS TAB */}
-      <div id="analysis-tab" className="nav-tab  text-gray-900 dark:text-white">
+      {/* <div id="analysis-tab" className="nav-tab  text-gray-900 dark:text-white">
         <strong className=" text-xl text-center my-2 ">
           <h1>Financial Goals</h1>
         </strong>
@@ -87,19 +84,23 @@ export default function Sidebar(props) {
           Weekly average: ${props.results.weeklyEstimate.toFixed(2)}{" "}
           {props.settings.currency}
         </p>
-      </div>
+      </div> */}
 
-      {/* INCOME TAB */}
-      <div id="income-tab" className="nav-tab text-gray-900 dark:text-white">
-        <strong className=" text-xl text-center my-2">
-          <h1>Income Information</h1>
-        </strong>
+      {/* SETTINGS TAB */}
+      <div id="settings-tab" className="nav-tab text-gray-900 dark:text-white">
+        <h1 className="relative z-10 text-xl text-center text-gray-900 dark:text-white font-bold">
+          Configure Financial Period
+        </h1>
+        <PeriodConfigForm />
+        {/* <h1 className="relative z-10 text-xl text-center text-gray-900 dark:text-white font-bold">
+          Income Information
+        </h1>
         <p>
           These settings are optional - you can still see your analysis without
           adding income information!
         </p>
-        <br />
-        <SettingsForm currentCurrency={props.settings.currency} />
+        <br /> 
+        <SettingsForm currentCurrency={props.settings.currency} /> */}
       </div>
     </div>
   );

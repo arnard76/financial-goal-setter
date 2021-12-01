@@ -30,7 +30,29 @@ export function PaymentProvider({ children }) {
   const { currentUser } = useAuth();
 
   const [payments, setPayments] = useState([]);
+  const [userDetails, setUserDetails] = useState({
+    "period start date": "[1,0,2000]",
+    "period end date": "[1,0,2020]",
+  });
   const [annualTotal, setAnnualTotal] = useState(0);
+
+  function getUserDetails() {
+    let q = query(
+      collection(db, "user-details"),
+      where("user", "==", currentUser.uid)
+    );
+    return onSnapshot(
+      q,
+      (querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          setUserDetails(doc.data());
+        });
+      },
+      (error) => {
+        console.log("onSnapshot failed: ", error);
+      }
+    );
+  }
 
   function validatePayment(payment) {
     // payment has a name
@@ -52,10 +74,10 @@ export function PaymentProvider({ children }) {
 
     // frequency period is one of the day,week,month or year
     if (
-      payment["frequency period"] !== "day" &&
-      payment["frequency period"] !== "week" &&
-      payment["frequency period"] !== "month" &&
-      payment["frequency period"] !== "year"
+      payment.frequency[2] !== "day" &&
+      payment.frequency[2] !== "week" &&
+      payment.frequency[2] !== "month" &&
+      payment.frequency[2] !== "year"
     ) {
       return [
         0,
@@ -64,12 +86,12 @@ export function PaymentProvider({ children }) {
     }
 
     // frequency count is integer
-    if (payment["frequency count"] % 1 !== 0) {
+    if (payment.frequency[0] % 1 !== 0) {
       return [0, "Payment must occur a whole number of times"];
     }
 
     // frequency count is at least one
-    if (payment["frequency count"] < 1) {
+    if (payment.frequency[0] < 1) {
       return [0, "Payment must occur at least once"];
     }
     return [1, "Payment is valid"];
@@ -128,7 +150,7 @@ export function PaymentProvider({ children }) {
     }
   }
 
-  function editPayment(paymentId, newPayment) {
+  async function editPayment(paymentId, newPayment) {
     console.log(
       "I promise I will update payment ",
       paymentId,
@@ -141,7 +163,7 @@ export function PaymentProvider({ children }) {
     );
   }
 
-  const getFrequencyMultiplier = (period = "month") => {
+  function getFrequencyMultiplier(period = "month") {
     period = period.toLowerCase();
     let multiplier;
     if (period === "day") {
@@ -154,7 +176,7 @@ export function PaymentProvider({ children }) {
       multiplier = 1;
     }
     return multiplier;
-  };
+  }
 
   function calcTotal(payments) {
     let total = 0.0;
@@ -162,23 +184,60 @@ export function PaymentProvider({ children }) {
     for (let index = 0; index < payments.length; index++) {
       if (payments[index].type === "Continuous") {
         total +=
-          payments[index].value *
-          payments[index]["frequency count"] *
-          getFrequencyMultiplier(payments[index]["frequency period"]);
+          payments[index].amount *
+          payments[index].frequency[0] *
+          getFrequencyMultiplier(payments[index].frequency[2]);
+      } else if (payments[index].type === "Repeated4") {
+        total +=
+          payments[index].amount *
+          payments[index].frequency[0] *
+          getFrequencyMultiplier(payments[index].frequency[2]);
+      } else if (payments[index].type === "One-off") {
+        total += payments[index].amount;
       }
     }
     setAnnualTotal(total);
   }
 
+  function calcOccurances(frequency, start, end) {
+    // re-calc # of occurances when freq or end/start change
+    // split into array 0->year, 1->month, 2->date
+    console.log("freq:", frequency, "   end:", end, "      start", start);
+
+    let diff;
+    if (frequency[2] === "day") {
+      start = start.split("-");
+      end = end.split("-");
+      start = new Date(start[0], start[1], start[2]);
+      end = new Date(end[0], end[1], end[2]);
+      diff = end - start; // in ms
+    } else if (frequency[2] === "week") {
+      start = start.split("-");
+      end = end.split("-");
+    } else if (frequency[2] === "month") {
+      start = start.split("-");
+      end = end.split("-");
+    } else if (frequency[2] === "year") {
+      diff = end - start + 1;
+    }
+    console.log("start:", start, "   end:", end, "      diff", diff);
+  }
+
   // all useful values/functions related to authentication
   const paymentDetails = {
+    getUserDetails,
+    userDetails,
+
     getPayments,
     payments,
+
     addPayment,
     deletePayment,
     editPayment,
+
     calcTotal,
     annualTotal,
+    calcOccurances,
   };
 
   return (

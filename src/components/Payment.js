@@ -9,7 +9,7 @@ export default function Payment(props) {
         style={{ cursor: "pointer" }}
       >
         <p className="flex-1 ">
-          ${props.value} {props.currency}
+          ${props.amount} {props.currency}
         </p>
         <p className="flex-1">{props.name}</p>
         <p className="flex-1">{props.frequency}</p>

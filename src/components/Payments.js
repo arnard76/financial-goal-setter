@@ -4,7 +4,7 @@ import { usePayments } from "../contexts/PaymentContext";
 
 export function PaymentMenu(props) {
   const { deletePayment } = usePayments();
-  const { id, name, notes, start, end, type, date } = props.payment;
+  const { id, name, notes, start, end, type, date, frequency } = props.payment;
   return (
     <div className="overflow-hidden p-4 bg-gray-100 dark:text-white dark:bg-gray-800 w-72">
       <p className="text-2xl">{name}</p>
@@ -12,8 +12,8 @@ export function PaymentMenu(props) {
       {type === "Repeated" ? (
         <>
           <p>
-            Frequency: {props.payment["frequency count"]} {" times a "}{" "}
-            {props.payment["frequency period"]}
+            Frequency: {frequency[0]} {" times every "} {frequency[1]}{" "}
+            {frequency[2]}
           </p>
           <p>Start: {start}</p>
           <p>End: {end}</p>
@@ -23,8 +23,8 @@ export function PaymentMenu(props) {
           {type === "Continuous" ? (
             <>
               <p>
-                Frequency: {props.payment["frequency count"]} {" times a "}{" "}
-                {props.payment["frequency period"]}
+                Frequency: {frequency[0]} {" times every "} {frequency[1]}{" "}
+                {frequency[2]}
               </p>
             </>
           ) : (
@@ -49,7 +49,7 @@ export function PaymentMenu(props) {
   );
 }
 
-export default function Payments({ payments }) {
+export default function Payments({ payments, settings, annualTotal }) {
   const [activePayment, setActivePayment] = useState({ id: null });
 
   function handleActivatePayment(payment) {
@@ -61,22 +61,47 @@ export default function Payments({ payments }) {
     }
   }
 
+  let { periodStartDate, periodEndDate } = settings;
+  periodStartDate = new Date(
+    periodStartDate[0],
+    periodStartDate[1],
+    periodStartDate[2]
+  );
+
+  periodEndDate = new Date(
+    periodEndDate[0],
+    periodEndDate[1],
+    periodEndDate[2]
+  );
+
   return (
     <>
       <div className="flex flex-1 ">
         <div className="relative  flex-1 p-4 h-screen overflow-y-auto bg-white dark:bg-gray-900 z-10">
-          <strong className="relative z-10 text-xl text-center text-gray-900 dark:text-white">
-            <h1>What does your financial goal look like?</h1>
-          </strong>
+          <div className="text-gray-900 dark:text-white  flex flex-col justify-center z-10 relative">
+            <h1 className="relative z-10 text-xl text-center text-gray-900 dark:text-white font-bold">
+              What does your financial goal look like?
+            </h1>
+
+            {/* QUICK CALCS */}
+            <div className="flex justify-around w-1/2 m-auto">
+              <p>
+                Showing payments from {periodStartDate.toString()} to{" "}
+                {periodStartDate.toString()}
+              </p>
+              <p>Annual total: ${annualTotal.toFixed(2)}</p>
+              <p>Weekly average: ${(annualTotal / 52).toFixed(2)} </p>
+            </div>
+          </div>
           {payments.map((payment) => {
             return (
               <Payment
                 onClick={() => handleActivatePayment(payment)}
                 key={payment.id}
                 name={payment.name}
-                value={payment.value}
+                amount={payment.amount}
                 frequency={`
-                  ${payment["frequency count"]} times a ${payment["frequency period"]}`}
+                  ${payment.frequency[0]} times every ${payment.frequency[1]} ${payment.frequency[2]}`}
               />
             );
           })}
