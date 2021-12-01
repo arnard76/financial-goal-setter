@@ -61,19 +61,35 @@ export default function Payments({ payments, settings, annualTotal }) {
     }
   }
 
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
   let { periodStartDate, periodEndDate } = settings;
+  console.log(periodStartDate, periodEndDate);
   periodStartDate = new Date(
-    periodStartDate[0],
+    periodStartDate[2],
     periodStartDate[1],
-    periodStartDate[2]
+    periodStartDate[0]
   );
 
   periodEndDate = new Date(
-    periodEndDate[0],
+    periodEndDate[2],
     periodEndDate[1],
-    periodEndDate[2]
+    periodEndDate[0]
   );
 
+  console.log(periodStartDate, periodEndDate);
   return (
     <>
       <div className="flex flex-1 ">
@@ -83,12 +99,22 @@ export default function Payments({ payments, settings, annualTotal }) {
               What does your financial goal look like?
             </h1>
 
-            {/* QUICK CALCS */}
+            {/* QUICK PAYMENTS ANALYSIS */}
             <div className="flex justify-around w-1/2 m-auto">
-              <p>
-                Showing payments from {periodStartDate.toString()} to{" "}
-                {periodStartDate.toString()}
-              </p>
+              <div className="flex items-center">
+                <p>
+                  Showing {periodStartDate.getDate()}{" "}
+                  {months[periodStartDate.getMonth()]}{" "}
+                  {periodStartDate.getFullYear()} <br />
+                  to {periodEndDate.getDate()}{" "}
+                  {months[periodEndDate.getMonth()]}{" "}
+                  {periodEndDate.getFullYear()}
+                </p>
+                <i
+                  className="fa fa-pencil  ml-2 text-xl"
+                  aria-hidden="true"
+                ></i>
+              </div>
               <p>Annual total: ${annualTotal.toFixed(2)}</p>
               <p>Weekly average: ${(annualTotal / 52).toFixed(2)} </p>
             </div>

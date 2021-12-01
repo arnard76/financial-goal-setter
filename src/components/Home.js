@@ -41,7 +41,7 @@ export default function Home() {
         settings={{
           // periodStartDate: "12th December 2021",
           periodStartDate: JSON.parse(userDetails["period start date"]),
-          periodEndDate: "12th December 2022",
+          periodEndDate: JSON.parse(userDetails["period end date"]),
         }}
         annualTotal={annualTotal}
       />
