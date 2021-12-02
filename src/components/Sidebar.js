@@ -9,10 +9,9 @@ import Tooltip from "./Tooltip";
 export default function Sidebar(props) {
   function handleClickNavIcon(event, tabName) {
     var clickedIcon = event.currentTarget;
-    var navIcons = document.querySelectorAll(".nav-icon");
+    var navIcons = document.querySelectorAll("nav .nav-icon");
     var clickedTab = document.querySelector("#" + tabName + "-tab");
-    var navTabs = document.querySelectorAll(".nav-tab");
-    // console.log(event.currentTarget);
+    var navTabs = document.querySelectorAll("#add-tab, #settings-tab");
 
     // toggle the tab (and close any others)
     if (clickedTab.classList.contains("active")) {

@@ -149,6 +149,7 @@ export default function Payments({ payments, settings, annualTotal }) {
           <div
             onClick={(e) => {
               handleActivatePayment(activePayment);
+              handleEditPayment(editingPayment);
             }}
             className="  absolute top-0 bottom-0 right-0 left-0 z-0"
           ></div>
