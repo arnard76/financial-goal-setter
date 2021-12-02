@@ -99,6 +99,23 @@ export function PaymentProvider({ children }) {
     return [1, "Payment is valid"];
   }
 
+  function removeIrrelevantFields(payment) {
+    if (payment.type === "Continuous") {
+      delete payment.date;
+      delete payment.end;
+      delete payment.start;
+    } else if (payment.type === "One-off") {
+      delete payment.frequency;
+      delete payment.end;
+      delete payment.start;
+    } else if (payment.type === "Repeated") {
+      delete payment.date;
+    }
+    delete payment.tempType;
+    delete payment.occurances;
+    return payment;
+  }
+
   function getPayments() {
     let q = query(
       collection(db, "payments"),
@@ -128,23 +145,8 @@ export function PaymentProvider({ children }) {
     }
 
     // remove unused fields so db is clean
-    // remove undefined keys from payment obj
     // so if continuous payment, date, end,start are not added to db
-    Object.keys(payment).forEach((key) => {
-      // payment[key] === undefined ? delete payment[key] : {}
-      if (payment.type === "Continuous") {
-        delete payment.date;
-        delete payment.end;
-        delete payment.start;
-      } else if (payment.type === "One-off") {
-        delete payment.frequency;
-        delete payment.end;
-        delete payment.start;
-      } else if (payment.type === "Repeated") {
-        delete payment.date;
-      }
-      console.log(payment);
-    });
+    payment = removeIrrelevantFields(payment);
 
     try {
       // add data to firestore db
@@ -167,23 +169,8 @@ export function PaymentProvider({ children }) {
     }
 
     // remove unused fields so db is clean
-    // remove undefined keys from payment obj
     // so if continuous payment, date, end,start are not added to db
-    Object.keys(payment).forEach((key) => {
-      // payment[key] === undefined ? delete payment[key] : {}
-      if (payment.type === "Continuous") {
-        delete payment.date;
-        delete payment.end;
-        delete payment.start;
-      } else if (payment.type === "One-off") {
-        delete payment.frequency;
-        delete payment.end;
-        delete payment.start;
-      } else if (payment.type === "Repeated") {
-        delete payment.date;
-      }
-      console.log(payment);
-    });
+    payment = removeIrrelevantFields(payment);
 
     try {
       // add data to firestore db
