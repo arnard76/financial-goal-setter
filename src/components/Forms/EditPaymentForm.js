@@ -20,7 +20,8 @@ export default function EditPaymentForm({ payment, goBack }) {
     type: payment.type,
     tempType: "",
     // 1 occurances every 30 days && corresponding input type of dates
-    frequency: payment.frequency,
+    frequency:
+      payment.type === "One-off" ? [1, 1, "once", "number"] : payment.frequency,
     notes: payment.notes,
     start: payment.start,
     end: payment.end,

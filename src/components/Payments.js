@@ -141,8 +141,11 @@ export default function Payments({ payments, settings, annualTotal }) {
                 key={payment.id}
                 name={payment.name}
                 amount={payment.amount}
-                frequency={`
-                  ${payment.frequency[0]} times every ${payment.frequency[1]} ${payment.frequency[2]}`}
+                frequency={
+                  payment.frequency
+                    ? `${payment.frequency[0]} times every ${payment.frequency[1]} ${payment.frequency[2]}`
+                    : "One-off"
+                }
               />
             );
           })}
