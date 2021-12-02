@@ -165,7 +165,9 @@ export default function Payments({ payments, settings, annualTotal }) {
         {editingPayment.id && (
           <div
             id="edit-tab"
-            className={`nav-tab ${editingPayment.id && "active"}`}
+            className={`nav-tab ${
+              editingPayment.id && "active"
+            }  overflow-y-auto h-screen`}
           >
             <h1 className="relative z-10 text-xl text-center text-gray-900 dark:text-white font-bold">
               Edit {editingPayment.name} payment
