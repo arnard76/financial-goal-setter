@@ -22,7 +22,7 @@
   }
 
   .nav-tab {
-    @apply hidden flex-col  bg-gray-100 dark:bg-gray-800 p-4 overflow-y-auto w-80;
+    @apply hidden flex-col  bg-gray-50 dark:bg-gray-800 p-4 overflow-y-auto w-80;
   }
 
   .nav-tab.active {

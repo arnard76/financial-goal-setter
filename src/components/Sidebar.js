@@ -32,7 +32,7 @@ export default function Sidebar(props) {
   return (
     <div className="h-screen flex">
       {/* NAV */}
-      <nav className="relative flex flex-col justify-around p-4  bg-gray-200 dark:bg-gray-900">
+      <nav className="relative flex flex-col justify-around p-4  bg-white dark:bg-gray-900">
         <div
           className="button nav-icon group"
           onClick={(event) => handleClickNavIcon(event, "add")}
