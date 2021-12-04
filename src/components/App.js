@@ -32,25 +32,35 @@ function AuthApp() {
   );
 }
 
+function PaymentApp() {
+  return (
+    <PaymentProvider>
+      <Switch>
+        <PrivateRoute exact path="/" component={Home} />
+        <PrivateRoute path="/check" component={Check} />
+      </Switch>
+    </PaymentProvider>
+  );
+}
+
 function App() {
   return (
     <>
       <BrowserRouter>
         <AuthProvider>
-          <PaymentProvider>
-            <Switch>
-              <PrivateRoute exact path="/" component={Home} />
-              <PrivateRoute path="/check" component={Check} />
+          <Switch>
+            {/* All payment paths */}
+            <PrivateRoute exact path="/" component={PaymentApp} />
 
-              {/* All auth paths */}
-              <Route path="/signup" component={AuthApp} />
-              <Route path="/login" component={AuthApp} />
-              <Route path="/forgot-password" component={AuthApp} />
+            {/* All auth paths - logged out */}
+            <Route path="/signup" component={AuthApp} />
+            <Route path="/login" component={AuthApp} />
+            <Route path="/forgot-password" component={AuthApp} />
 
-              <PrivateRoute path="/profile" component={AuthApp} />
-              <PrivateRoute path="/update-profile" component={AuthApp} />
-            </Switch>
-          </PaymentProvider>
+            {/* All auth paths - logged in */}
+            <PrivateRoute path="/profile" component={AuthApp} />
+            <PrivateRoute path="/update-profile" component={AuthApp} />
+          </Switch>
         </AuthProvider>
       </BrowserRouter>
     </>
