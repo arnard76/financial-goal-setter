@@ -13,8 +13,10 @@ export function PaymentMenu(props) {
       {type === "Repeated" ? (
         <>
           <p>
-            Frequency: {frequency[0]} {" times every "} {frequency[1]}{" "}
+            Frequency: {frequency[0]}
+            {` time${frequency[0] === 1 ? "" : "s"} every `} {frequency[1]}{" "}
             {frequency[2]}
+            {frequency[1] === 1 ? "" : "s"}
           </p>
           <p>Start: {start}</p>
           <p>End: {end}</p>
@@ -24,8 +26,10 @@ export function PaymentMenu(props) {
           {type === "Continuous" ? (
             <>
               <p>
-                Frequency: {frequency[0]} {" times every "} {frequency[1]}{" "}
+                Frequency: {frequency[0]}{" "}
+                {` time${frequency[0] === 1 ? "" : "s"} every `} {frequency[1]}{" "}
                 {frequency[2]}
+                {frequency[1] === 1 ? "" : "s"}
               </p>
             </>
           ) : (
@@ -143,7 +147,12 @@ export default function Payments({ payments, settings, annualTotal }) {
                 amount={payment.amount}
                 frequency={
                   payment.frequency
-                    ? `${payment.frequency[0]} times every ${payment.frequency[1]} ${payment.frequency[2]}`
+                    ? payment.frequency[0] +
+                      ` time${payment.frequency[0] === 1 ? "" : "s"} every ` +
+                      payment.frequency[1] +
+                      ` ` +
+                      payment.frequency[2] +
+                      `${payment.frequency[1] === 1 ? "" : "s"}`
                     : "One-off"
                 }
               />
@@ -157,6 +166,8 @@ export default function Payments({ payments, settings, annualTotal }) {
             className="  absolute top-0 bottom-0 right-0 left-0 z-0"
           ></div>
         </div>
+
+        {/* ACTIVE TAB */}
         {activePayment.id && !editingPayment.id && (
           <PaymentMenu
             payment={activePayment}
@@ -164,8 +175,8 @@ export default function Payments({ payments, settings, annualTotal }) {
             editPayment={handleEditPayment}
           />
         )}
-        {/* EDIT TAB */}
 
+        {/* EDIT TAB */}
         {editingPayment.id && (
           <div
             id="edit-tab"
