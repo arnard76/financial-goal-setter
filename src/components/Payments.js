@@ -145,16 +145,7 @@ export default function Payments({ payments, settings, annualTotal }) {
                 key={payment.id}
                 name={payment.name}
                 amount={payment.amount}
-                frequency={
-                  payment.frequency
-                    ? payment.frequency[0] +
-                      ` time${payment.frequency[0] === 1 ? "" : "s"} every ` +
-                      payment.frequency[1] +
-                      ` ` +
-                      payment.frequency[2] +
-                      `${payment.frequency[1] === 1 ? "" : "s"}`
-                    : "One-off"
-                }
+                frequency={payment.frequency ? payment.frequency : "One-off"}
               />
             );
           })}
