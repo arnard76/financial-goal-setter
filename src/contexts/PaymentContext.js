@@ -43,77 +43,19 @@ export function PaymentProvider({ children }) {
     return onSnapshot(
       q,
       (querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          setUserDetails(doc.data());
+        if (querySnapshot.size === 1) {
+          setUserDetails(querySnapshot.docs[0].data());
           setLoading(false);
-        });
+        } else {
+          console.log(
+            "More than one user-details doc with user: " + currentUser.uid
+          );
+        }
       },
       (error) => {
         console.log("onSnapshot failed: ", error);
       }
     );
-  }
-
-  function validatePayment(payment) {
-    // payment has a name
-    if (payment.name.length === 0) {
-      return [0, "payment name value is blank"];
-    }
-
-    // frequency type is continuous, repeated or one-off
-    if (
-      payment.type !== "Continuous" &&
-      payment.type !== "Repeated" &&
-      payment.type !== "One-off"
-    ) {
-      return [
-        0,
-        "Payment type invalid, contact arnard76@gmail.com  " + payment.type,
-      ];
-    }
-
-    // frequency period is one of the day,week,month or year
-    if (
-      payment.type != "One-off" &&
-      payment.frequency[2] !== "day" &&
-      payment.frequency[2] !== "week" &&
-      payment.frequency[2] !== "month" &&
-      payment.frequency[2] !== "year"
-    ) {
-      return [
-        0,
-        "payment frequency period is invalid" + payment["frequency period"],
-      ];
-    }
-
-    // frequency count is integer
-    if (payment.frequency[0] % 1 !== 0) {
-      return [0, "Payment must occur a whole number of times"];
-    }
-
-    // frequency count is at least one
-    if (payment.frequency[0] < 1) {
-      return [0, "Payment must occur at least once"];
-    }
-
-    return [1, "Payment is valid"];
-  }
-
-  function removeIrrelevantFields(payment) {
-    if (payment.type === "Continuous") {
-      delete payment.date;
-      delete payment.end;
-      delete payment.start;
-    } else if (payment.type === "One-off") {
-      delete payment.frequency;
-      delete payment.end;
-      delete payment.start;
-    } else if (payment.type === "Repeated") {
-      delete payment.date;
-    }
-    delete payment.tempType;
-    delete payment.occurances;
-    return payment;
   }
 
   function getPayments() {
@@ -137,6 +79,50 @@ export function PaymentProvider({ children }) {
     );
   }
 
+  function validatePayment(payment) {
+    // payment has a name
+    if (payment.name.length === 0) {
+      return [0, "payment name value is blank"];
+    }
+
+    // payment name too long
+    if (payment.name.length > 100) {
+      return [0, "payment name value cannot be more than 100 characters long"];
+    }
+
+    // payment notes are too long
+    if (payment.notes.length > 1000) {
+      return [0, "payment notes cannot be more than 1000 characters long"];
+    }
+
+    // frequency period is one of the day,week,month or year
+    if (
+      payment.frequency !== null &&
+      payment.frequency[2] !== "day" &&
+      payment.frequency[2] !== "week" &&
+      payment.frequency[2] !== "month" &&
+      payment.frequency[2] !== "year"
+    ) {
+      return [
+        0,
+        "payment frequency period must be day, week, month or year " +
+          payment["frequency period"],
+      ];
+    }
+
+    // frequency count is integer
+    if (payment.frequency[0] % 1 !== 0) {
+      return [0, "Payment must occur a whole number of times"];
+    }
+
+    // frequency count is at least one
+    if (payment.frequency[0] < 1) {
+      return [0, "Payment must occur at least once"];
+    }
+
+    return [1, "Payment is valid"];
+  }
+
   async function addPayment(payment) {
     // validate payment data
     let [valid, message] = validatePayment(payment);
@@ -144,12 +130,9 @@ export function PaymentProvider({ children }) {
       return [0, message];
     }
 
-    // remove unused fields so db is clean
-    // so if continuous payment, date, end,start are not added to db
-    payment = removeIrrelevantFields(payment);
-
     try {
       // add data to firestore db
+      console.log(payment);
       await addDoc(collection(db, "payments"), {
         ...payment,
         user: currentUser.uid,
@@ -157,7 +140,7 @@ export function PaymentProvider({ children }) {
       return [1, payment.name + " has been added to your payments"];
     } catch (err) {
       console.log(err);
-      return [0, err];
+      return [0, err.message];
     }
   }
 
@@ -168,10 +151,6 @@ export function PaymentProvider({ children }) {
       return [0, message];
     }
 
-    // remove unused fields so db is clean
-    // so if continuous payment, date, end,start are not added to db
-    payment = removeIrrelevantFields(payment);
-
     try {
       // add data to firestore db
       await updateDoc(doc(db, "payments", paymentId), {
@@ -180,7 +159,7 @@ export function PaymentProvider({ children }) {
       return [1, payment.name + " has been updated"];
     } catch (err) {
       console.log(err);
-      return [0, err];
+      return [0, err.message];
     }
   }
 
@@ -192,71 +171,92 @@ export function PaymentProvider({ children }) {
       return [1, "deleted successfully"];
     } catch (err) {
       console.log(err);
-      return [0, err];
+      return [0, err.message];
     }
   }
 
-  function getFrequencyMultiplier(period = "month") {
-    period = period.toLowerCase();
-    let multiplier;
+  function numDaysInPeriod(period) {
+    let numDays;
     if (period === "day") {
-      multiplier = 365;
+      numDays = 1;
     } else if (period === "week") {
-      multiplier = 52;
-    } else if (period === "month") {
-      multiplier = 12;
+      numDays = 7;
     } else if (period === "year") {
-      multiplier = 1;
+      numDays = 365;
+    } else {
+      numDays = NaN;
     }
-    return multiplier;
+    return numDays;
   }
 
   function calcTotal(payments) {
     let total = 0.0;
 
     for (let index = 0; index < payments.length; index++) {
-      if (payments[index].type === "Continuous") {
+      let payment = payments[index];
+      console.log(payment);
+      if (payment.frequency === null) {
+        // One-off
+        total += payment.amount;
+      } else if (payment.end === null) {
+        // Continuous
         total +=
-          payments[index].amount *
-          payments[index].frequency[0] *
-          getFrequencyMultiplier(payments[index].frequency[2]);
-      } else if (payments[index].type === "Repeated4") {
+          payment.amount *
+          calcOccurances(
+            payment.frequency,
+            payment.start,
+            userDetails["period end date"]
+          );
+      } else {
+        // Repeated
         total +=
-          payments[index].amount *
-          payments[index].frequency[0] *
-          getFrequencyMultiplier(payments[index].frequency[2]);
-      } else if (payments[index].type === "One-off") {
-        total += payments[index].amount;
+          payment.amount *
+          calcOccurances(payment.frequency, payment.start, payment.end);
       }
     }
     setAnnualTotal(total);
   }
 
-  function calcOccurances(frequency, start, end) {
-    // re-calc # of occurances when freq or end/start change
-    // split into array 0->year, 1->month, 2->date
-    console.log("freq:", frequency, "   end:", end, "      start", start);
-
-    let diff;
-    if (frequency[2] === "day") {
-      start = start.split("-");
-      end = end.split("-");
-      start = new Date(start[0], start[1], start[2]);
-      end = new Date(end[0], end[1], end[2]);
-      diff = end - start; // in ms
-    } else if (frequency[2] === "week") {
-      start = start.split("-");
-      end = end.split("-");
-    } else if (frequency[2] === "month") {
-      start = start.split("-");
-      end = end.split("-");
-    } else if (frequency[2] === "year") {
-      diff = end - start + 1;
-    }
-    console.log("start:", start, "   end:", end, "      diff", diff);
+  // assume end is later than start date
+  function calcPaymentDuration(start, end) {
+    // const daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    // const daysInMonthLeapyear = [
+    //   31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31,
+    // ];
+    let paymentDuration = 1;
+    start = new Date(start[2], start[1], start[0]);
+    end = new Date(end[2], end[1], end[0]);
+    // console.log("start", start, "\nend", end);
+    paymentDuration += (end - start) / 86400000;
+    return paymentDuration;
   }
 
-  // when page loads, gets a continuous snapshot of user details
+  function calcOccurances(frequency, start, end) {
+    // re-calc # of occurances when freq or end/start change
+    console.log("freq:", frequency, "   end:", end, "      start", start);
+
+    let diff = calcPaymentDuration(start, end);
+    let occurances =
+      frequency[0] *
+      Math.floor(diff / (numDaysInPeriod(frequency[2]) * frequency[1]));
+    console.log(
+      // "start:",
+      // start,
+      // "\nend:",
+      // end,
+      "\nfreq:",
+      frequency,
+      "\ndiff:",
+      diff,
+      "\noccurances:",
+      occurances
+      // "\nmultiplier:",
+      // numDaysInPeriod(frequency[2])
+    );
+    return occurances;
+  }
+
+  // keeps user details & payments up to date
   useEffect(() => {
     let unsubscribe = getPayments();
     let unsubscribe2 = getUserDetails();
@@ -267,7 +267,7 @@ export function PaymentProvider({ children }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // calculate annual total when payments are changed/added/deleted
+  // keeps annual total updated
   useEffect(() => {
     calcTotal(payments);
     // eslint-disable-next-line react-hooks/exhaustive-deps

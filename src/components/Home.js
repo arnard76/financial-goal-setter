@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 
 // home components
 import Sidebar from "./Sidebar";
@@ -16,8 +16,8 @@ export default function Home() {
         payments={payments}
         settings={{
           // periodStartDate: "12th December 2021",
-          periodStartDate: JSON.parse(userDetails["period start date"]),
-          periodEndDate: JSON.parse(userDetails["period end date"]),
+          periodStartDate: userDetails["period start date"],
+          periodEndDate: userDetails["period end date"],
         }}
         annualTotal={annualTotal}
       />

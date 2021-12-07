@@ -13,21 +13,51 @@ export default function AddPaymentForm() {
   const [message, setMessage] = useState("");
 
   // to store form inputs/default inputs
-  let date = new Date();
+  const date = new Date();
   const initialInputValues = {
     name: "",
     amount: 0,
     type: "Continuous",
     tempType: "",
-    // 1 occurances every 30 days && corresponding input type of dates
-    frequency: [1, 30, "day", "date"],
+    // 1 occurances every 30 days
+    frequency: [1, 30, "day"],
     notes: "",
-    start: "",
+    start:
+      date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate(),
     end: "",
-    date: "",
     occurances: 0,
   };
   const [inputValues, setInputValues] = useState(initialInputValues);
+
+  // put inputs into correct format
+  function cleanPaymentFields(payment) {
+    let { notes, name, amount, frequency, start, end } = payment;
+    start = start.split("-");
+    start.reverse();
+    if (end === "") {
+      end = null;
+    } else {
+      try {
+        end = end.split("-");
+        end.reverse();
+        for (let count = 0; count < 3; count++) {
+          end[count] = parseInt(end[count]);
+        }
+        end[1] = end[1] - 1;
+      } catch (e) {
+        console.log(e);
+      }
+    }
+    for (let count = 0; count < 3; count++) {
+      start[count] = parseInt(start[count]);
+    }
+    start[1] = start[1] - 1;
+
+    if (frequency === "") {
+      frequency = null;
+    }
+    return { notes, name, amount, frequency, start, end };
+  }
 
   // handle form submit
   const { addPayment } = usePayments();
@@ -37,7 +67,7 @@ export default function AddPaymentForm() {
     setError("");
     setMessage("");
 
-    let [success, message] = await addPayment(inputValues);
+    let [success, message] = await addPayment(cleanPaymentFields(inputValues));
     if (success) {
       setInputValues(initialInputValues);
       setMessage(message);
@@ -47,115 +77,23 @@ export default function AddPaymentForm() {
     setLoading(false);
   }
 
-  // handle type changing
-  useEffect(() => {
-    let typeInputs,
-      type = inputValues.type;
-    if (type === "Continuous") {
-      typeInputs = {
-        start: "",
-        end: "",
-        date: "",
-      };
-    } else if (type === "Repeated") {
-      typeInputs = {
-        start:
-          date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate(),
-        end: date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate(),
-        date: "",
-      };
-    } else if (type === "One-off") {
-      typeInputs = {
-        start: "",
-        end: "",
-        date: date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate(),
-        frequency: [1, 0, "once"],
-        // "frequency count": 1,
-        // "frequency period": "once",
-        // "frequency period count": 0,
-      };
-    }
-    setInputValues({ ...inputValues, ...typeInputs });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inputValues.type]);
-
-  // when the freq period is changed (e.g. day to month),
-  useEffect(() => {
-    if (inputValues.type === "Repeated") {
-      let start, end, inputType;
-      if (inputValues.frequency[2] === "day") {
-        start =
-          date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate();
-        end = date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate();
-        inputType = "date";
-      } else if (inputValues.frequency[2] === "week") {
-        start = date.getWeekYear() + "-W" + date.getWeek();
-        end = date.getWeekYear() + "-W" + date.getWeek();
-        inputType = "week";
-      } else if (inputValues.frequency[2] === "month") {
-        start = date.getFullYear() + "-" + date.getMonth();
-        end = date.getFullYear() + "-" + date.getMonth();
-        inputType = "month";
-      } else if (inputValues.frequency[2] === "year") {
-        start = date.getFullYear();
-        end = date.getFullYear();
-        inputType = "number";
-      } else {
-        console.error(
-          "doesn't match any of the periods specified: ",
-          inputValues.frequency[2]
-        );
-      }
-      setInputValues({
-        ...inputValues,
-        start: start,
-        end: end,
-        frequency: [
-          inputValues.frequency[0],
-          inputValues.frequency[1],
-          inputValues.frequency[2],
-          inputType,
-        ],
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inputValues.frequency[2]]);
-
   // re-calc # of occurances when freq or end/start change
   const { calcOccurances } = usePayments();
   useEffect(() => {
-    if (inputValues.type === "Repeated") {
-      calcOccurances(inputValues.frequency, inputValues.start, inputValues.end);
+    if (
+      inputValues.type === "Repeated" &&
+      inputValues.start !== "" &&
+      inputValues.end !== ""
+    ) {
+      console.log("happenign");
+      const { frequency, start, end } = cleanPaymentFields(inputValues);
+      setInputValues({
+        ...inputValues,
+        occurances: calcOccurances(frequency, start, end),
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputValues.start, inputValues.end, inputValues.frequency]);
-
-  // Returns the ISO week of the date.
-  Date.prototype.getWeek = function () {
-    var date = new Date(this.getTime());
-    date.setHours(0, 0, 0, 0);
-    // Thursday in current week decides the year.
-    date.setDate(date.getDate() + 3 - ((date.getDay() + 6) % 7));
-    // January 4 is always in week 1.
-    var week1 = new Date(date.getFullYear(), 0, 4);
-    // Adjust to Thursday in week 1 and count number of weeks from date to week1.
-    return (
-      1 +
-      Math.round(
-        ((date.getTime() - week1.getTime()) / 86400000 -
-          3 +
-          ((week1.getDay() + 6) % 7)) /
-          7
-      )
-    );
-  };
-
-  // Returns the four-digit year corresponding to the ISO week of the date.
-  Date.prototype.getWeekYear = function () {
-    var date = new Date(this.getTime());
-    date.setDate(date.getDate() + 3 - ((date.getDay() + 6) % 7));
-    return date.getFullYear();
-  };
 
   return (
     <>
@@ -196,19 +134,6 @@ export default function AddPaymentForm() {
           />
         </FormGroup>
 
-        {/* <FormGroup label="Type">
-          <select
-            type="select"
-            className="form-input"
-            value={inputValues.type}
-            onChange={handleChangeType}
-          >
-            <option>Continuous</option>
-            <option>Repeated</option>
-            <option>One-off</option>
-          </select>
-        </FormGroup> */}
-
         {/* IS ONE-OFF? */}
         <FormGroup prefix="Is this a one-time payment?">
           {/* <label className="text-white">Yes</label> */}
@@ -218,19 +143,29 @@ export default function AddPaymentForm() {
             checked={inputValues.type === "One-off" ? true : false}
             onChange={(e) => {
               // console.log("clicked", e.target.value);
-              let type, tempType;
+              let typeInputs;
               if (inputValues.type === "One-off") {
-                type = inputValues.tempType;
-                tempType = "";
+                typeInputs = {
+                  type: inputValues.tempType,
+                  tempType: "",
+                  frequency: initialInputValues.frequency,
+                  end:
+                    inputValues.tempType === "Continuous"
+                      ? ""
+                      : inputValues.start,
+                };
               } else {
-                type = "One-off";
-                tempType = inputValues.type;
+                typeInputs = {
+                  type: "One-off",
+                  tempType: inputValues.type,
+                  end: "",
+                  frequency: "",
+                };
               }
 
               setInputValues({
                 ...inputValues,
-                tempType: tempType,
-                type: type,
+                ...typeInputs,
               });
             }}
           />
@@ -266,7 +201,7 @@ export default function AddPaymentForm() {
               />
               <p className=" text-black dark:text-white w-full text-center">
                 {" "}
-                times every{" "}
+                time{inputValues.frequency[0] === 1 ? "" : "s"} every{" "}
               </p>
               <input
                 type="number"
@@ -307,10 +242,15 @@ export default function AddPaymentForm() {
                   });
                 }}
               >
-                <option value="day">days</option>
-                <option value="week">weeks</option>
-                <option value="month">months</option>
-                <option value="year">years</option>
+                <option value="day">
+                  {inputValues.frequency[1] === 1 ? "day" : "days"}
+                </option>
+                <option value="week">
+                  {inputValues.frequency[1] === 1 ? "week" : "weeks"}
+                </option>
+                <option value="year">
+                  {inputValues.frequency[1] === 1 ? "year" : "years"}
+                </option>
               </select>
             </FormGroup>
           </>
@@ -346,9 +286,9 @@ export default function AddPaymentForm() {
         {/* FIRST&LAST PAYMENT TIME INPUT IF Repeated Payment Type*/}
         {inputValues.type === "Repeated" ? (
           <>
-            <FormGroup label={`First ${inputValues.frequency[2]} of payment`}>
+            <FormGroup label="First day of payment">
               <input
-                type={inputValues.frequency[3]}
+                type="date"
                 className="form-input"
                 value={inputValues.start}
                 onChange={(event) => {
@@ -359,9 +299,9 @@ export default function AddPaymentForm() {
                 }}
               />
             </FormGroup>
-            <FormGroup label={`Last ${inputValues.frequency[2]} of payment`}>
+            <FormGroup label="Last day of payment">
               <input
-                type={inputValues.frequency[3]}
+                type="date"
                 className="form-input"
                 value={inputValues.end}
                 onChange={(event) => {
@@ -372,46 +312,30 @@ export default function AddPaymentForm() {
                 }}
               />
             </FormGroup>
-            {/* <FormGroup
-              label={`For how many ${inputValues.frequency[2]}s?`}
-              postfix={`${inputValues.frequency[2]}s`}
-            >
-              <input
-                type="number"
-                className="form-input-small"
-                value={inputValues.occurances}
-                onChange={(event) => {
-                  setInputValues({
-                    ...inputValues,
-                    occurances: event.target.value,
-                  });
-                }}
-              />
-            </FormGroup> */}
             <p className="dark:text-white text-black mb-5">
               This payment occurs {inputValues.occurances} times
             </p>
           </>
         ) : (
-          <>
-            {inputValues.type === "One-off" ? (
-              <FormGroup label="When do you make the payment?">
-                <input
-                  type="date"
-                  className="form-input"
-                  value={inputValues.date}
-                  onChange={(event) => {
-                    setInputValues({
-                      ...inputValues,
-                      date: event.target.value,
-                    });
-                  }}
-                />
-              </FormGroup>
-            ) : (
-              <></>
-            )}
-          </>
+          <FormGroup
+            label={
+              inputValues.type === "One-off"
+                ? "The day of Payment?"
+                : "First day of Payment?"
+            }
+          >
+            <input
+              type="date"
+              className="form-input"
+              value={inputValues.start}
+              onChange={(event) => {
+                setInputValues({
+                  ...inputValues,
+                  start: event.target.value,
+                });
+              }}
+            />
+          </FormGroup>
         )}
 
         <button disabled={loading} onClick={handleSubmit} className="button">
