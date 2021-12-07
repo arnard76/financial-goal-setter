@@ -13,22 +13,51 @@ export default function EditPaymentForm({ payment, goBack }) {
   const [message, setMessage] = useState("");
 
   // to store form inputs/default inputs
-  let date = new Date();
+  const date = new Date();
   const initialInputValues = {
     name: payment.name,
     amount: payment.amount,
-    type: payment.type,
+    type: "Continuous",
     tempType: "",
-    // 1 occurances every 30 days && corresponding input type of dates
-    frequency:
-      payment.type === "One-off" ? [1, 1, "once", "number"] : payment.frequency,
+    // 1 occurances every 30 days
+    frequency: payment.frequency,
     notes: payment.notes,
-    start: payment.start,
-    end: payment.end,
-    date: payment.date,
+    start:
+      date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate(),
+    end: payment.end === null ? payment.end : "",
     occurances: 0,
   };
   const [inputValues, setInputValues] = useState(initialInputValues);
+
+  // put inputs into correct format
+  function cleanPaymentFields(payment) {
+    let { notes, name, amount, frequency, start, end } = payment;
+    start = start.split("-");
+    start.reverse();
+    if (end === "") {
+      end = null;
+    } else {
+      try {
+        end = end.split("-");
+        end.reverse();
+        for (let count = 0; count < 3; count++) {
+          end[count] = parseInt(end[count]);
+        }
+        end[1] = end[1] - 1;
+      } catch (e) {
+        console.log(e);
+      }
+    }
+    for (let count = 0; count < 3; count++) {
+      start[count] = parseInt(start[count]);
+    }
+    start[1] = start[1] - 1;
+
+    if (frequency === "") {
+      frequency = null;
+    }
+    return { notes, name, amount, frequency, start, end };
+  }
 
   // handle form submit
   const { editPayment } = usePayments();
@@ -38,7 +67,10 @@ export default function EditPaymentForm({ payment, goBack }) {
     setError("");
     setMessage("");
 
-    let [success, message] = await editPayment(payment.id, inputValues);
+    let [success, message] = await editPayment(
+      payment.id,
+      cleanPaymentFields(inputValues)
+    );
     if (success) {
       setInputValues(initialInputValues);
       setMessage(message);
@@ -48,85 +80,20 @@ export default function EditPaymentForm({ payment, goBack }) {
     setLoading(false);
   }
 
-  // handle type changing
-  useEffect(() => {
-    let typeInputs,
-      type = inputValues.type;
-    if (type === "Continuous") {
-      typeInputs = {
-        start: "",
-        end: "",
-        date: "",
-      };
-    } else if (type === "Repeated") {
-      typeInputs = {
-        start:
-          date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate(),
-        end: date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate(),
-        date: "",
-      };
-    } else if (type === "One-off") {
-      typeInputs = {
-        start: "",
-        end: "",
-        date: date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate(),
-        frequency: [1, 0, "once"],
-        // "frequency count": 1,
-        // "frequency period": "once",
-        // "frequency period count": 0,
-      };
-    }
-    setInputValues({ ...inputValues, ...typeInputs });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inputValues.type]);
-
-  // when the freq period is changed (e.g. day to month),
-  useEffect(() => {
-    if (inputValues.type === "Repeated") {
-      let start, end, inputType;
-      if (inputValues.frequency[2] === "day") {
-        start =
-          date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate();
-        end = date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate();
-        inputType = "date";
-      } else if (inputValues.frequency[2] === "week") {
-        start = date.getWeekYear() + "-W" + date.getWeek();
-        end = date.getWeekYear() + "-W" + date.getWeek();
-        inputType = "week";
-      } else if (inputValues.frequency[2] === "month") {
-        start = date.getFullYear() + "-" + date.getMonth();
-        end = date.getFullYear() + "-" + date.getMonth();
-        inputType = "month";
-      } else if (inputValues.frequency[2] === "year") {
-        start = date.getFullYear();
-        end = date.getFullYear();
-        inputType = "number";
-      } else {
-        console.error(
-          "doesn't match any of the periods specified: ",
-          inputValues.frequency[2]
-        );
-      }
-      setInputValues({
-        ...inputValues,
-        start: start,
-        end: end,
-        frequency: [
-          inputValues.frequency[0],
-          inputValues.frequency[1],
-          inputValues.frequency[2],
-          inputType,
-        ],
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inputValues.frequency[2]]);
-
   // re-calc # of occurances when freq or end/start change
   const { calcOccurances } = usePayments();
   useEffect(() => {
-    if (inputValues.type === "Repeated") {
-      calcOccurances(inputValues.frequency, inputValues.start, inputValues.end);
+    if (
+      inputValues.type === "Repeated" &&
+      inputValues.start !== "" &&
+      inputValues.end !== ""
+    ) {
+      console.log("happenign");
+      const { frequency, start, end } = cleanPaymentFields(inputValues);
+      setInputValues({
+        ...inputValues,
+        occurances: calcOccurances(frequency, start, end),
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputValues.start, inputValues.end, inputValues.frequency]);
@@ -197,19 +164,6 @@ export default function EditPaymentForm({ payment, goBack }) {
           />
         </FormGroup>
 
-        {/* <FormGroup label="Type">
-          <select
-            type="select"
-            className="form-input"
-            value={inputValues.type}
-            onChange={handleChangeType}
-          >
-            <option>Continuous</option>
-            <option>Repeated</option>
-            <option>One-off</option>
-          </select>
-        </FormGroup> */}
-
         {/* IS ONE-OFF? */}
         <FormGroup prefix="Is this a one-time payment?">
           {/* <label className="text-white">Yes</label> */}
@@ -219,19 +173,29 @@ export default function EditPaymentForm({ payment, goBack }) {
             checked={inputValues.type === "One-off" ? true : false}
             onChange={(e) => {
               // console.log("clicked", e.target.value);
-              let type, tempType;
+              let typeInputs;
               if (inputValues.type === "One-off") {
-                type = inputValues.tempType;
-                tempType = "";
+                typeInputs = {
+                  type: inputValues.tempType,
+                  tempType: "",
+                  frequency: initialInputValues.frequency,
+                  end:
+                    inputValues.tempType === "Continuous"
+                      ? ""
+                      : inputValues.start,
+                };
               } else {
-                type = "One-off";
-                tempType = inputValues.type;
+                typeInputs = {
+                  type: "One-off",
+                  tempType: inputValues.type,
+                  end: "",
+                  frequency: "",
+                };
               }
 
               setInputValues({
                 ...inputValues,
-                tempType: tempType,
-                type: type,
+                ...typeInputs,
               });
             }}
           />
@@ -267,7 +231,7 @@ export default function EditPaymentForm({ payment, goBack }) {
               />
               <p className=" text-black dark:text-white w-full text-center">
                 {" "}
-                times every{" "}
+                time{inputValues.frequency[0] === 1 ? "" : "s"} every{" "}
               </p>
               <input
                 type="number"
@@ -308,10 +272,15 @@ export default function EditPaymentForm({ payment, goBack }) {
                   });
                 }}
               >
-                <option value="day">days</option>
-                <option value="week">weeks</option>
-                <option value="month">months</option>
-                <option value="year">years</option>
+                <option value="day">
+                  {inputValues.frequency[1] === 1 ? "day" : "days"}
+                </option>
+                <option value="week">
+                  {inputValues.frequency[1] === 1 ? "week" : "weeks"}
+                </option>
+                <option value="year">
+                  {inputValues.frequency[1] === 1 ? "year" : "years"}
+                </option>
               </select>
             </FormGroup>
           </>
@@ -347,9 +316,9 @@ export default function EditPaymentForm({ payment, goBack }) {
         {/* FIRST&LAST PAYMENT TIME INPUT IF Repeated Payment Type*/}
         {inputValues.type === "Repeated" ? (
           <>
-            <FormGroup label={`First ${inputValues.frequency[2]} of payment`}>
+            <FormGroup label="First day of payment">
               <input
-                type={inputValues.frequency[3]}
+                type="date"
                 className="form-input"
                 value={inputValues.start}
                 onChange={(event) => {
@@ -360,9 +329,9 @@ export default function EditPaymentForm({ payment, goBack }) {
                 }}
               />
             </FormGroup>
-            <FormGroup label={`Last ${inputValues.frequency[2]} of payment`}>
+            <FormGroup label="Last day of payment">
               <input
-                type={inputValues.frequency[3]}
+                type="date"
                 className="form-input"
                 value={inputValues.end}
                 onChange={(event) => {
@@ -373,57 +342,34 @@ export default function EditPaymentForm({ payment, goBack }) {
                 }}
               />
             </FormGroup>
-            {/* <FormGroup
-              label={`For how many ${inputValues.frequency[2]}s?`}
-              postfix={`${inputValues.frequency[2]}s`}
-            >
-              <input
-                type="number"
-                className="form-input-small"
-                value={inputValues.occurances}
-                onChange={(event) => {
-                  setInputValues({
-                    ...inputValues,
-                    occurances: event.target.value,
-                  });
-                }}
-              />
-            </FormGroup> */}
             <p className="dark:text-white text-black mb-5">
               This payment occurs {inputValues.occurances} times
             </p>
           </>
         ) : (
-          <>
-            {inputValues.type === "One-off" ? (
-              <FormGroup label="When do you make the payment?">
-                <input
-                  type="date"
-                  className="form-input"
-                  value={inputValues.date}
-                  onChange={(event) => {
-                    setInputValues({
-                      ...inputValues,
-                      date: event.target.value,
-                    });
-                  }}
-                />
-              </FormGroup>
-            ) : (
-              <></>
-            )}
-          </>
+          <FormGroup
+            label={
+              inputValues.type === "One-off"
+                ? "The day of Payment?"
+                : "First day of Payment?"
+            }
+          >
+            <input
+              type="date"
+              className="form-input"
+              value={inputValues.start}
+              onChange={(event) => {
+                setInputValues({
+                  ...inputValues,
+                  start: event.target.value,
+                });
+              }}
+            />
+          </FormGroup>
         )}
 
         <button disabled={loading} onClick={handleSubmit} className="button">
           Edit Payment
-        </button>
-        <button
-          disabled={loading}
-          onClick={goBack}
-          className="button bg-red-800 hover:bg-red-900"
-        >
-          Cancel
         </button>
       </form>
       {error && <Message type="error" message={error} />}
