@@ -5,40 +5,23 @@ import EditPaymentForm from "./Forms/EditPaymentForm";
 
 export function PaymentMenu(props) {
   const { deletePayment } = usePayments();
-  const { id, name, notes, start, end, type, date, frequency } = props.payment;
+  const { id, name, notes, start, end, frequency } = props.payment;
   return (
     <div className="overflow-hidden p-4 bg-gray-100 dark:text-white dark:bg-gray-800 w-72">
       <p className="text-2xl">{name}</p>
       <p>Notes: {notes}</p>
-      {type === "Repeated" ? (
-        <>
-          <p>
-            Frequency: {frequency[0]}
-            {` time${frequency[0] === 1 ? "" : "s"} every `} {frequency[1]}{" "}
-            {frequency[2]}
-            {frequency[1] === 1 ? "" : "s"}
-          </p>
-          <p>Start: {start}</p>
-          <p>End: {end}</p>
-        </>
+      {frequency !== null ? (
+        <p>
+          Frequency: {frequency[0]}
+          {` time${frequency[0] === 1 ? "" : "s"} every `} {frequency[1]}{" "}
+          {frequency[2]}
+          {frequency[1] === 1 ? "" : "s"}
+        </p>
       ) : (
-        <>
-          {type === "Continuous" ? (
-            <>
-              <p>
-                Frequency: {frequency[0]}{" "}
-                {` time${frequency[0] === 1 ? "" : "s"} every `} {frequency[1]}{" "}
-                {frequency[2]}
-                {frequency[1] === 1 ? "" : "s"}
-              </p>
-            </>
-          ) : (
-            <>
-              <p>Date: {date}</p>
-            </>
-          )}
-        </>
+        <p>Frequency: One-off</p>
       )}
+      <p>Start: {start}</p>
+      {end !== null ? <p>End: {end}</p> : <></>}
 
       <div
         className="button mt-4"
