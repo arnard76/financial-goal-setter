@@ -13,7 +13,6 @@ export default function EditPaymentForm({ payment, goBack }) {
   const [message, setMessage] = useState("");
 
   // to store form inputs/default inputs
-  const date = new Date();
   const initialInputValues = {
     name: payment.name,
     amount: payment.amount,
@@ -23,13 +22,38 @@ export default function EditPaymentForm({ payment, goBack }) {
         : payment.end === null
         ? "Continuous"
         : "Repeated",
-    tempType: "",
-    // 1 occurances every 30 days
-    frequency: payment.frequency,
+    tempType: "Continuous",
+    frequency: payment.frequency !== null ? payment.frequency : "",
     notes: payment.notes,
     start:
-      date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate(),
+      payment.start[2] +
+      "-" +
+      (payment.start[1] + 1 > 9
+        ? payment.start[1] + 1
+        : "0" + (payment.start[1] + 1)) +
+      "-" +
+      (payment.start[0] > 9 ? payment.start[0] : "0" + payment.start[0]),
     end: payment.end === null ? payment.end : "",
+    occurances: 0,
+  };
+  let date = new Date();
+  const defaultInputValues = {
+    name: "",
+    amount: 0,
+    type: "Continuous",
+    tempType: "",
+    // 1 occurances every 30 days
+    frequency: [1, 30, "day"],
+    notes: "",
+    start:
+      date.getFullYear() +
+      "-" +
+      +(date.getMonth() + 1 > 9
+        ? date.getMonth() + 1
+        : "0" + (date.getMonth() + 1)) +
+      "-" +
+      (date.getDate() > 9 ? date.getDate() : "0" + date.getDate()),
+    end: "",
     occurances: 0,
   };
   const [inputValues, setInputValues] = useState(initialInputValues);
@@ -150,13 +174,12 @@ export default function EditPaymentForm({ payment, goBack }) {
             className="ml-2"
             checked={inputValues.type === "One-off" ? true : false}
             onChange={(e) => {
-              // console.log("clicked", e.target.value);
               let typeInputs;
               if (inputValues.type === "One-off") {
                 typeInputs = {
                   type: inputValues.tempType,
                   tempType: "",
-                  frequency: initialInputValues.frequency,
+                  frequency: defaultInputValues.frequency,
                   end:
                     inputValues.tempType === "Continuous"
                       ? ""
@@ -268,21 +291,28 @@ export default function EditPaymentForm({ payment, goBack }) {
 
         {/* IS REPEATED? */}
         {inputValues.type !== "One-off" ? (
-          <FormGroup prefix="Will this payment stop after some time?">
+          <FormGroup prefix="Make payment stop before the financial period end">
             <input
               type="checkbox"
               className="ml-2"
               checked={inputValues.type === "Repeated" ? true : false}
               onChange={(e) => {
-                let type;
+                let typeInputs;
                 if (inputValues.type === "Repeated") {
-                  type = "Continuous";
-                } else {
-                  type = "Repeated";
+                  typeInputs = {
+                    type: "Continuous",
+                    end: "",
+                  };
+                } else if (inputValues.type === "Continuous") {
+                  typeInputs = {
+                    type: "Repeated",
+                    end: inputValues.start,
+                  };
                 }
+
                 setInputValues({
                   ...inputValues,
-                  type: type,
+                  ...typeInputs,
                 });
               }}
             />

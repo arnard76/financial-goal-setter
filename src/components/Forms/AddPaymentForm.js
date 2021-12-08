@@ -23,7 +23,13 @@ export default function AddPaymentForm() {
     frequency: [1, 30, "day"],
     notes: "",
     start:
-      date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate(),
+      date.getFullYear() +
+      "-" +
+      +(date.getMonth() + 1 > 9
+        ? date.getMonth() + 1
+        : "0" + (date.getMonth() + 1)) +
+      "-" +
+      (date.getDate() > 9 ? date.getDate() : "0" + date.getDate()),
     end: "",
     occurances: 0,
   };
@@ -135,14 +141,13 @@ export default function AddPaymentForm() {
         </FormGroup>
 
         {/* IS ONE-OFF? */}
-        <FormGroup prefix="Is this a one-time payment?">
+        <FormGroup prefix="Make this a one-off payment">
           {/* <label className="text-white">Yes</label> */}
           <input
             type="checkbox"
             className="ml-2"
             checked={inputValues.type === "One-off" ? true : false}
             onChange={(e) => {
-              // console.log("clicked", e.target.value);
               let typeInputs;
               if (inputValues.type === "One-off") {
                 typeInputs = {
@@ -260,21 +265,28 @@ export default function AddPaymentForm() {
 
         {/* IS REPEATED? */}
         {inputValues.type !== "One-off" ? (
-          <FormGroup prefix="Will this payment stop after some time?">
+          <FormGroup prefix="Make payment stop before the financial period end">
             <input
               type="checkbox"
               className="ml-2"
               checked={inputValues.type === "Repeated" ? true : false}
               onChange={(e) => {
-                let type;
+                let typeInputs;
                 if (inputValues.type === "Repeated") {
-                  type = "Continuous";
-                } else {
-                  type = "Repeated";
+                  typeInputs = {
+                    type: "Continuous",
+                    end: "",
+                  };
+                } else if (inputValues.type === "Continuous") {
+                  typeInputs = {
+                    type: "Repeated",
+                    end: inputValues.start,
+                  };
                 }
+
                 setInputValues({
                   ...inputValues,
-                  type: type,
+                  ...typeInputs,
                 });
               }}
             />

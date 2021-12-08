@@ -13,7 +13,7 @@ export default function Payment({ payment, onClick }) {
         <p className="flex-1">{name}</p>
         <p className="flex-1">
           {frequency === null
-            ? "One-off"
+            ? "one-off"
             : `${frequency[0] === 1 ? "once" : frequency[0] + " times"} every ${
                 frequency[1] === 1
                   ? frequency[2]
