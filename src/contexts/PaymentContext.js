@@ -95,31 +95,30 @@ export function PaymentProvider({ children }) {
       return [0, "payment notes cannot be more than 1000 characters long"];
     }
 
-    // frequency period is one of the day,week,month or year
-    if (
-      payment.frequency !== null &&
-      payment.frequency[2] !== "day" &&
-      payment.frequency[2] !== "week" &&
-      payment.frequency[2] !== "month" &&
-      payment.frequency[2] !== "year"
-    ) {
-      return [
-        0,
-        "payment frequency period must be day, week, month or year " +
-          payment["frequency period"],
-      ];
-    }
-
     // frequency count is integer
-    if (payment.frequency[0] % 1 !== 0) {
-      return [0, "Payment must occur a whole number of times"];
-    }
+    if (payment.frequency !== null) {
+      // frequency period is one of the day,week,month or year
+      if (
+        payment.frequency[2] !== "day" &&
+        payment.frequency[2] !== "week" &&
+        payment.frequency[2] !== "month" &&
+        payment.frequency[2] !== "year"
+      ) {
+        return [
+          0,
+          "payment frequency period must be day, week, month or year " +
+            payment["frequency period"],
+        ];
+      }
+      if (payment.frequency[0] % 1 !== 0) {
+        return [0, "Payment must occur a whole number of times"];
+      }
 
-    // frequency count is at least one
-    if (payment.frequency[0] < 1) {
-      return [0, "Payment must occur at least once"];
+      // frequency count is at least one
+      if (payment.frequency[0] < 1) {
+        return [0, "Payment must occur at least once"];
+      }
     }
-
     return [1, "Payment is valid"];
   }
 
@@ -189,7 +188,7 @@ export function PaymentProvider({ children }) {
     return numDays;
   }
 
-  function calcTotal(payments) {
+  function calcTotal(payments, userDetails) {
     let total = 0.0;
 
     for (let index = 0; index < payments.length; index++) {
@@ -269,7 +268,7 @@ export function PaymentProvider({ children }) {
 
   // keeps annual total updated
   useEffect(() => {
-    calcTotal(payments);
+    !loading && calcTotal(payments, userDetails);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [payments]);
 

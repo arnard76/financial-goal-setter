@@ -1,4 +1,4 @@
-import React, { createRef, useState } from "react";
+import React, { useState } from "react";
 import FormGroup from "../FormGroup2";
 import Message from "../Message";
 
@@ -54,7 +54,6 @@ export default function PeriodConfigForm(props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
-  const incomeTypeRef = createRef();
 
   function handleSubmit(event) {
     event.preventDefault();
