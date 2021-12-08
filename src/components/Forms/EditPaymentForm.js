@@ -17,7 +17,12 @@ export default function EditPaymentForm({ payment, goBack }) {
   const initialInputValues = {
     name: payment.name,
     amount: payment.amount,
-    type: "Continuous",
+    type:
+      payment.frequency === null
+        ? "One-off"
+        : payment.end === null
+        ? "Continuous"
+        : "Repeated",
     tempType: "",
     // 1 occurances every 30 days
     frequency: payment.frequency,
