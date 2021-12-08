@@ -126,9 +126,7 @@ export default function Payments({ payments, settings, annualTotal }) {
               <Payment
                 onClick={() => handleActivatePayment(payment)}
                 key={payment.id}
-                name={payment.name}
-                amount={payment.amount}
-                frequency={payment.frequency ? payment.frequency : "One-off"}
+                payment={payment}
               />
             );
           })}
