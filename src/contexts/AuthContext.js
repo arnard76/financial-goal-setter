@@ -10,6 +10,10 @@ import {
 } from "firebase/auth";
 import { auth } from "../firebase";
 
+//firestore imports
+import { collection, addDoc } from "firebase/firestore";
+import { db } from "../firebase";
+
 // context for this component is called AuthContext - being explicit always good
 const AuthContext = React.createContext();
 
@@ -31,34 +35,46 @@ export function AuthProvider({ children }) {
   // firebase has not yet authenticated user so currently in loading state
   const [loading, setLoading] = useState(true);
 
-  // function creates a user with given email and pass using firebase auth
   function signup(email, password) {
     return createUserWithEmailAndPassword(auth, email, password);
     // return sendEmailVerification()
   }
 
-  // function signs in a user with given email and pass using firebase auth
   function login(email, password) {
     return signInWithEmailAndPassword(auth, email, password);
   }
 
-  // function logouts the current user
   function logout() {
     return signOut(auth);
   }
 
-  // function that sends reset password email
   function resetPassword(email) {
     return sendPasswordResetEmail(auth, email);
   }
 
-  // function that updates email
   function updateEmail(email) {
     return updateEmailFirebase(currentUser, email);
   }
-  // function that updates password
+
   function updatePassword(password) {
     return updatePasswordFirebase(currentUser, password);
+  }
+
+  function createUserDetails() {
+    let date = new Date();
+    return addDoc(collection(db, "user-details"), {
+      user: currentUser.uid,
+      "period start date": [
+        date.getDate(),
+        date.getMonth(),
+        date.getFullYear(),
+      ],
+      "period end date": [
+        date.getDate(),
+        date.getMonth(),
+        date.getFullYear() + 1,
+      ],
+    });
   }
 
   useEffect(() => {
@@ -79,6 +95,7 @@ export function AuthProvider({ children }) {
     resetPassword,
     updateEmail,
     updatePassword,
+    createUserDetails,
   };
 
   return (

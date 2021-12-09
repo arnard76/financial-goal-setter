@@ -28,7 +28,7 @@ export function PaymentProvider({ children }) {
   // this could change and will rerender this component (just like class components)
   // the 1st arg is the variable and the 2nd is the function to call to update variable
   // optional could put initial state of variable as arg of useState func
-  const { currentUser } = useAuth();
+  const { currentUser, createUserDetails } = useAuth();
 
   const [loading, setLoading] = useState(true);
   const [payments, setPayments] = useState([]);
@@ -42,9 +42,13 @@ export function PaymentProvider({ children }) {
     );
     return onSnapshot(
       q,
-      (querySnapshot) => {
+      async (querySnapshot) => {
         if (querySnapshot.size === 1) {
           setUserDetails(querySnapshot.docs[0].data());
+          setLoading(false);
+        } else if (querySnapshot.size === 0) {
+          await createUserDetails();
+          getUserDetails();
           setLoading(false);
         } else {
           console.log(

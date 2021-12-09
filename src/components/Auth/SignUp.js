@@ -8,7 +8,7 @@ export default function SignUp() {
   const emailRef = useRef();
   const passwordRef = useRef();
   const passwordConfirmRef = useRef();
-  const { signup } = useAuth();
+  const { signup, createUserDetails } = useAuth();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const history = useHistory();
@@ -32,6 +32,11 @@ export default function SignUp() {
       // neccesary cuz user may try again and if different error, previous error should go away
       setError("");
       await signup(emailRef.current.value, passwordRef.current.value);
+      try {
+        await createUserDetails();
+      } catch (error) {
+        console.log(error);
+      }
       history.push("/");
     } catch {
       setError("Failed to create an account");
