@@ -46,14 +46,13 @@ export default function Sidebar(props) {
           <i className="fa fa-file-text fa-2x " aria-hidden="true"></i>
           <Tooltip text="Analysis" />
         </div> */}
-        <div
+        {/* <div
           className="button nav-icon group"
           onClick={(event) => handleClickNavIcon(event, "settings")}
         >
           <i className="fa fa-cog fa-2x " aria-hidden="true"></i>
-          {/* <p className="tooltip">Income</p> */}
           <Tooltip text="Settings" />
-        </div>
+        </div> */}
 
         <Link to="/profile" className="button nav-icon group">
           <i className="fa fa-user fa-2x" aria-hidden="true"></i>
