@@ -117,10 +117,10 @@ export default function Payments({ payments, settings, annualTotal }) {
                   {months[periodEndDate.getMonth()]}{" "}
                   {periodEndDate.getFullYear()}
                 </p>
-                <i
+                {/* <i
                   className="fa fa-pencil  ml-2 text-xl"
                   aria-hidden="true"
-                ></i>
+                ></i> */}
               </div>
               <p>Annual total: ${annualTotal.toFixed(2)}</p>
               <p>Weekly average: ${(annualTotal / 52).toFixed(2)} </p>
