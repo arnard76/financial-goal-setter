@@ -49,9 +49,10 @@ export function PaymentMenu(props) {
   );
 }
 
-export default function Payments({ payments, settings, annualTotal }) {
+export default function Payments() {
   const [activePayment, setActivePayment] = useState({ id: null });
   const [editingPayment, setEditingPayment] = useState({ id: null });
+  let { userDetails, filteredPayments: payments, annualTotal } = usePayments();
 
   function handleActivatePayment(payment) {
     // console.log("check", payment);
@@ -84,7 +85,10 @@ export default function Payments({ payments, settings, annualTotal }) {
     "November",
     "December",
   ];
-  let { periodStartDate, periodEndDate } = settings;
+  let {
+    "period start date": periodStartDate,
+    "period end date": periodEndDate,
+  } = userDetails;
   periodStartDate = new Date(
     periodStartDate[2],
     periodStartDate[1],
