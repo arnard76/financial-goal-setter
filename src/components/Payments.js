@@ -117,27 +117,28 @@ export default function Payments() {
           ></div>
         </div>
 
-            {/* QUICK PAYMENTS ANALYSIS */}
-            <div className="flex justify-around w-1/2 m-auto">
-              <div className="flex items-center">
-                <p>
-                  Showing {periodStartDate.getDate()}{" "}
-                  {months[periodStartDate.getMonth()]}{" "}
-                  {periodStartDate.getFullYear()} <br />
-                  to {periodEndDate.getDate()}{" "}
-                  {months[periodEndDate.getMonth()]}{" "}
-                  {periodEndDate.getFullYear()}
-                </p>
-                {/* <i
-                  className="fa fa-pencil  ml-2 text-xl"
-                  aria-hidden="true"
-                ></i> */}
-              </div>
-              <p>Annual total: ${annualTotal.toFixed(2)}</p>
-              <p>Weekly average: ${(annualTotal / 52).toFixed(2)} </p>
-            </div>
+        {/* QUICK PAYMENTS ANALYSIS */}
+        <div className="flex justify-around w-3/4 m-auto shadow-sm relative z-10">
+          <div className="flex items-center">
+            <p>
+              {periodStartDate.getDate()}
+              {"/"}
+              {periodStartDate.getMonth() + 1}
+              {"/"}
+              {periodStartDate.getFullYear()}
+              {" to "}
+              {periodEndDate.getDate()}
+              {"/"}
+              {periodEndDate.getMonth() + 1}
+              {"/"}
+              {periodEndDate.getFullYear()}
+            </p>
           </div>
-      
+          <p>Sum: ${periodTotal.toFixed(2)}</p>
+          <p>Weekly average: ${(periodTotal / 52).toFixed(2)} </p>
+        </div>
+      </div>
+
       {/* ACTIVE TAB */}
       {showingPayment.id && !editingPayment.id && (
         <PaymentMenu
