@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import AddPaymentForm from "./Forms/AddPaymentForm";
-import PeriodConfigForm from "./Forms/SettingsForm";
+import GeneralSettingsForm from "./Forms/SettingsForm";
 import Tooltip from "./Tooltip";
 
 export default function Sidebar(props) {

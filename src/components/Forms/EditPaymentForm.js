@@ -101,7 +101,6 @@ export default function EditPaymentForm({ payment, goBack }) {
       cleanPaymentFields(inputValues)
     );
     if (success) {
-      setInputValues(initialInputValues);
       setMessage(message);
     } else {
       setError(message);

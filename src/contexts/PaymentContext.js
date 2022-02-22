@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { useAuth } from "./AuthContext";
 
-//firebase imports
+//firestore imports
 import {
   collection,
   addDoc,
@@ -34,7 +34,7 @@ export function PaymentProvider({ children }) {
   const [payments, setPayments] = useState([]);
   const [filteredPayments, setFilteredPayments] = useState([]);
   const [userDetails, setUserDetails] = useState();
-  const [annualTotal, setAnnualTotal] = useState(0);
+  const [periodTotal, setPeriodTotal] = useState(0);
 
   function getUserDetails() {
     let q = query(
@@ -82,45 +82,6 @@ export function PaymentProvider({ children }) {
         console.log("onSnapshot failed: ", error);
       }
     );
-  }
-
-  // inputs: payments list, start date: [dd, mm, year], end date: [dd, mm, year]
-  // state variable filteredPayments is updated!
-  function filterPayments(payments, start, end) {
-    let filteredPayments = [];
-    let startDate = new Date(start[2], start[1], start[0]);
-    let endDate = new Date(end[2], end[1], end[0]);
-    for (let index = 0; index < payments.length; index++) {
-      let payment = payments[index];
-      let paymentStartDate = new Date(
-        payment.start[2],
-        payment.start[1],
-        payment.start[0]
-      );
-      if (payment.end !== null) {
-        //repeated
-        console.log(payment.end);
-        let paymentEndDate = new Date(
-          payment.end[2],
-          payment.end[1],
-          payment.end[0]
-        );
-        if (paymentEndDate >= startDate && paymentStartDate <= endDate) {
-          filteredPayments.push(payment);
-        }
-      } else if (payment.frequency !== null) {
-        // continuous
-        if (paymentStartDate <= endDate) {
-          filteredPayments.push(payment);
-        }
-      } else {
-        //one-off
-        if (paymentStartDate <= endDate && paymentStartDate >= startDate) {
-          filteredPayments.push(payment);
-        }
-      }
-    }
-    setFilteredPayments(filteredPayments);
   }
 
   function validatePayment(payment) {
@@ -174,8 +135,6 @@ export function PaymentProvider({ children }) {
     }
 
     try {
-      // add data to firestore db
-      console.log(payment);
       await addDoc(collection(db, "payments"), {
         ...payment,
         user: currentUser.uid,
@@ -232,19 +191,7 @@ export function PaymentProvider({ children }) {
     return numDays;
   }
 
-  function calcTotal(payments, userDetails) {
-    let total = 0.0;
-
-    for (let index = 0; index < payments.length; index++) {
-      let payment = payments[index];
-      console.log(payment);
-      if (payment.frequency === null) {
-        // One-off
-        total += payment.amount;
-      } else if (payment.end === null) {
-        // Continuous
-        total +=
-          payment.amount *
+  function calcPeriodTotal() {
           calcOccurances(
             payment.frequency,
             payment.start,
@@ -310,7 +257,7 @@ export function PaymentProvider({ children }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // keeps annual total updated
+  // keeps filteredPayments updated
   useEffect(() => {
     if (!loading) {
       calcTotal(payments, userDetails);
@@ -333,7 +280,7 @@ export function PaymentProvider({ children }) {
     deletePayment,
     editPayment,
 
-    annualTotal,
+    periodTotal,
     calcOccurances,
   };
 

@@ -4,8 +4,6 @@ import React from "react";
 import Sidebar from "./Sidebar";
 import Payments from "./Payments";
 
-import { usePayments } from "../contexts/PaymentContext";
-
 export default function Home() {
   return (
     <div className="flex">
