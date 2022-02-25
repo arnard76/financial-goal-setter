@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Payment from "./Payment";
 import PaymentMenu from "./PaymentMenu";
-import { usePayments } from "../contexts/PaymentContext";
+import { usePayments } from "../contexts/PaymentsContext";
 import EditPaymentForm from "./Forms/EditPaymentForm";
 
 export default function Payments() {

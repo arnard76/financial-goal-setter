@@ -14,16 +14,16 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase";
 
-const PaymentContext = React.createContext();
+const PaymentsContext = React.createContext();
 
-// if imported, this function gives access to all of PaymentContext/which may
+// if imported, this function gives access to all of PaymentsContext/which may
 // or may not be accessible to their scope. This is the context consumer.
 // (CLUE: gives access to paymentsDetails variable below)
 export function usePayments() {
-  return useContext(PaymentContext);
+  return useContext(PaymentsContext);
 }
 
-export function PaymentProvider({ children }) {
+export function PaymentsProvider({ children }) {
   // this is how to add a variable to state in functional components
   // this could change and will rerender this component (just like class components)
   // the 1st arg is the variable and the 2nd is the function to call to update variable
@@ -81,6 +81,48 @@ export function PaymentProvider({ children }) {
       (error) => {
         console.log("onSnapshot failed: ", error);
       }
+    );
+  }
+
+  function filterToActivePayments(startDateLimit, endDateLimit) {
+    // e.g. 21 or 5 => "21" or "05"
+    function formatTo2Digits(number) {
+      return number.length === 1 ? "0" + number : number;
+    }
+
+    startDateLimit =
+      startDateLimit[2].toString() +
+      formatTo2Digits(startDateLimit[1]) +
+      formatTo2Digits(startDateLimit[0]);
+
+    endDateLimit =
+      endDateLimit[2].toString() +
+      formatTo2Digits(endDateLimit[1]) +
+      formatTo2Digits(endDateLimit[0]);
+
+    setFilteredPayments(
+      payments.filter((payment) => {
+        let paymentStartDate =
+          payment.start[2].toString() +
+          formatTo2Digits(payment.start[1]) +
+          formatTo2Digits(payment.start[0]);
+
+        let paymentEndDate;
+        if (!payment.frequency) {
+          paymentEndDate = paymentStartDate;
+        } else if (!payment.end) {
+          paymentEndDate = endDateLimit;
+        } else {
+          paymentEndDate =
+            payment.end[2].toString() +
+            formatTo2Digits(payment.end[1]) +
+            formatTo2Digits(payment.end[0]);
+        }
+        return (
+          paymentStartDate - startDateLimit >= 0 &&
+          paymentEndDate - endDateLimit <= 0
+        );
+      })
     );
   }
 
@@ -192,6 +234,18 @@ export function PaymentProvider({ children }) {
   }
 
   function calcPeriodTotal() {
+    let total = 0.0;
+
+    for (let index = 0; index < payments.length; index++) {
+      let payment = payments[index];
+      console.log(payment);
+      if (payment.frequency === null) {
+        // One-off
+        total += payment.amount;
+      } else if (payment.end === null) {
+        // Continuous
+        total +=
+          payment.amount *
           calcOccurances(
             payment.frequency,
             payment.start,
@@ -204,7 +258,7 @@ export function PaymentProvider({ children }) {
           calcOccurances(payment.frequency, payment.start, payment.end);
       }
     }
-    setAnnualTotal(total);
+    setPeriodTotal(total);
   }
 
   // assume end is later than start date
@@ -260,9 +314,8 @@ export function PaymentProvider({ children }) {
   // keeps filteredPayments updated
   useEffect(() => {
     if (!loading) {
-      calcTotal(payments, userDetails);
-      filterPayments(
-        payments,
+      calcPeriodTotal(payments, userDetails);
+      filterToActivePayments(
         userDetails["period start date"],
         userDetails["period end date"]
       );
@@ -288,9 +341,9 @@ export function PaymentProvider({ children }) {
     // provides auth details to all of the children components
     <>
       {!loading && (
-        <PaymentContext.Provider value={paymentDetails}>
+        <PaymentsContext.Provider value={paymentDetails}>
           {children}
-        </PaymentContext.Provider>
+        </PaymentsContext.Provider>
       )}
     </>
   );

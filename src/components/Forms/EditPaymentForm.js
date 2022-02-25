@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Message from "../Message";
 import FormGroup from "../FormGroup2";
 
-import { usePayments } from "../../contexts/PaymentContext";
+import { usePayments } from "../../contexts/PaymentsContext";
 
 export default function EditPaymentForm({ payment, goBack }) {
   // to control form inputs/actions

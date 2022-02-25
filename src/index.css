@@ -3,6 +3,14 @@
 @tailwind utilities;
 
 @layer components {
+  .button {
+    @apply bg-blue-500 text-white text-center cursor-pointer mb-2 py-2 rounded-md  hover:bg-blue-600 transition-all duration-200;
+  }
+
+  .button.active {
+    @apply bg-blue-600;
+  }
+
   .form-input {
     @apply w-full py-2 outline-none border-2 focus:rounded-md focus:border-blue-500 dark:bg-gray-850 bg-white dark:text-white text-gray-900 transition-all duration-200;
     border-color: transparent transparent rgb(59, 130, 246) transparent;
@@ -11,14 +19,6 @@
   .form-input-small {
     @apply w-24 py-2 outline-none border-2 focus:rounded-md focus:border-blue-500 dark:bg-gray-850 bg-white dark:text-white text-gray-900 transition-all duration-200 text-center;
     border-color: transparent transparent rgb(59, 130, 246) transparent;
-  }
-
-  .button {
-    @apply bg-blue-500 text-white text-center cursor-pointer mb-2 py-2 rounded-md  hover:bg-blue-600 transition-all duration-200;
-  }
-
-  .button.active {
-    @apply bg-blue-600;
   }
 
   .nav-tab {

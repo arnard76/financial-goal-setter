@@ -1,4 +1,4 @@
-import { usePayments } from "../contexts/PaymentContext";
+import { usePayments } from "../contexts/PaymentsContext";
 export default function PaymentMenu(props) {
   const { deletePayment } = usePayments();
   const { id, name, notes, start, end, frequency } = props.payment;

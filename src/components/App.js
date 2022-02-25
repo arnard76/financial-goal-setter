@@ -1,6 +1,6 @@
 import Home from "./Home";
 import Check from "./Check";
-import { PaymentProvider } from "../contexts/PaymentContext";
+import { PaymentsProvider } from "../contexts/PaymentsContext";
 
 // User Authentication stuff
 import SignUp from "./Auth/SignUp";
@@ -34,12 +34,12 @@ function AuthApp() {
 
 function PaymentApp() {
   return (
-    <PaymentProvider>
+    <PaymentsProvider>
       <Switch>
         <PrivateRoute exact path="/" component={Home} />
         <PrivateRoute path="/check" component={Check} />
       </Switch>
-    </PaymentProvider>
+    </PaymentsProvider>
   );
 }
 
