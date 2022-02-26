@@ -3,10 +3,11 @@ import React, { useState, useEffect } from "react";
 // custom components
 import Message from "../Message";
 import FormGroup from "../FormGroup2";
+import Modal from "./Modal";
 
 import { usePayments } from "../../contexts/PaymentsContext";
 
-export default function AddPaymentForm() {
+export default function AddPaymentModal({ isOpen, setOpen }) {
   // to control form inputs/actions
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -102,7 +103,7 @@ export default function AddPaymentForm() {
   }, [inputValues.start, inputValues.end, inputValues.frequency]);
 
   return (
-    <>
+    <Modal isOpen={isOpen} setOpen={setOpen}>
       <form className="flex flex-col">
         {/* COMMON INPUTS */}
         <FormGroup label="Notes">
@@ -356,6 +357,6 @@ export default function AddPaymentForm() {
       </form>
       {error && <Message type="error" message={error} />}
       {message && <Message message={message} />}
-    </>
+    </Modal>
   );
 }

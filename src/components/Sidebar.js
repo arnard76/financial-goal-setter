@@ -1,11 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useModals } from "../contexts/ModalsContext";
 
-import AddPaymentForm from "./Forms/AddPaymentForm";
 import GeneralSettingsForm from "./Forms/SettingsForm";
 import Tooltip from "./Tooltip";
 
-export default function Sidebar(props) {
+export default function Sidebar() {
   function handleClickNavIcon(event, tabName) {
     var clickedIcon = event.currentTarget;
     var navIcons = document.querySelectorAll("nav .nav-icon");
@@ -28,13 +28,15 @@ export default function Sidebar(props) {
     }
   }
 
+  const { setAddPaymentModalOpen } = useModals();
+
   return (
     <div className="h-screen flex">
       {/* NAV */}
       <nav className="relative flex flex-col justify-around p-4  bg-white dark:bg-gray-900">
         <div
           className="button nav-icon group"
-          onClick={(event) => handleClickNavIcon(event, "add")}
+          onClick={() => setAddPaymentModalOpen(true)}
         >
           <i className="fa fa-plus fa-2x" aria-hidden="true"></i>
           <Tooltip text="Add" />
@@ -59,15 +61,6 @@ export default function Sidebar(props) {
           <Tooltip text="Profile" />
         </Link>
       </nav>
-
-      {/* ADD TAB */}
-      <div id="add-tab" className="nav-tab">
-        <h1 className="relative z-10 text-xl text-center text-gray-900 dark:text-white font-bold">
-          Add a payment
-        </h1>
-
-        <AddPaymentForm />
-      </div>
 
       {/* RESULTS TAB */}
       {/* <div id="analysis-tab" className="nav-tab  text-gray-900 dark:text-white">

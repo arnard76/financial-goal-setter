@@ -37,4 +37,29 @@
   .nav-icon.active {
     @apply rounded-xl;
   }
+
+  .modal {
+    z-index: 999;
+
+    width: 35rem;
+    height: 40rem;
+    max-height: 90vh;
+    margin: auto auto;
+
+    @apply hidden overflow-y-auto inset-0 absolute bg-gray-100 dark:bg-gray-800 p-4;
+  }
+
+  .modal.active {
+    @apply block;
+  }
+
+  .modal-close {
+    z-index: 998;
+
+    @apply hidden bg-black bg-opacity-90 inset-0 absolute justify-center items-center cursor-pointer;
+  }
+
+  .modal-close.active {
+    @apply flex;
+  }
 }
