@@ -1,6 +1,8 @@
 import React, { useState, useContext } from "react";
 
 import AddPaymentModal from "../components/Modals/AddPaymentModal";
+import EditPaymentModal from "../components/Modals/EditPaymentModal";
+import PaymentDetailsModal from "../components/PaymentDetailsModal";
 
 const ModalsContext = React.createContext();
 
@@ -15,9 +17,18 @@ export function ModalsProvider({ children }) {
   // const [loading, setLoading] = useState(false);
   const [isAddPaymentModalOpen, setAddPaymentModalOpen] = useState(false);
 
+  const [viewingPayment, setViewingPayment] = useState({ id: null });
+  const [editingPayment, setEditingPayment] = useState({ id: null });
+
   let modalsDetails = {
     isAddPaymentModalOpen,
     setAddPaymentModalOpen,
+
+    viewingPayment,
+    setViewingPayment,
+
+    editingPayment,
+    setEditingPayment,
   };
 
   return (
@@ -26,6 +37,20 @@ export function ModalsProvider({ children }) {
         isOpen={isAddPaymentModalOpen}
         setOpen={setAddPaymentModalOpen}
       />
+      {viewingPayment.id && !editingPayment.id && (
+        <PaymentDetailsModal
+          isOpen={viewingPayment.id}
+          setOpen={() => setViewingPayment({ id: null })}
+          payment={viewingPayment}
+        ></PaymentDetailsModal>
+      )}
+      {editingPayment.id && (
+        <EditPaymentModal
+          payment={editingPayment}
+          isOpen={editingPayment.id}
+          setOpen={() => setEditingPayment({ id: null })}
+        />
+      )}
       {children}
     </ModalsContext.Provider>
   );
