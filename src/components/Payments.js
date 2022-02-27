@@ -58,8 +58,8 @@ export default function Payments() {
 
   return (
     <>
-      <div className="flex flex-1 flex-col h-screen relative">
-        <div className="  flex-1 p-4 overflow-y-auto bg-white dark:bg-gray-900 z-10">
+      <div className="flex flex-1 flex-col h-screen relative bg-white dark:bg-gray-900">
+        <div className="  flex-1 p-4 overflow-y-auto z-10">
           <div className="text-gray-900 dark:text-white  flex flex-col justify-center relative">
             <h1 className="relative z-10 text-xl text-center text-gray-900 dark:text-white font-bold">
               What does your financial goal look like?
@@ -118,7 +118,7 @@ export default function Payments() {
         </div>
 
         {/* QUICK PAYMENTS ANALYSIS */}
-        <div className="flex justify-around w-3/4 m-auto shadow-sm relative z-10">
+        <div className="flex justify-around px-16 py-2  border-blue-400 border-solid border-t-4 relative z-10 dark:text-white">
           <div className="flex items-center">
             <p>
               {periodStartDate.getDate()}

@@ -89,7 +89,7 @@ export default function Sidebar(props) {
         <h1 className="relative z-10 text-xl text-center text-gray-900 dark:text-white font-bold">
           Configure Financial Period
         </h1>
-        <PeriodConfigForm />
+        <GeneralSettingsForm />
         {/* <h1 className="relative z-10 text-xl text-center text-gray-900 dark:text-white font-bold">
           Income Information
         </h1>
