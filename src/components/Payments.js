@@ -41,11 +41,9 @@ export default function Payments() {
   return (
     <div className="flex flex-col flex-1 p-4  bg-white dark:bg-gray-900 h-screen">
       {/* TITLE/MAIN HEADING */}
-      <div className="text-gray-900 dark:text-white  flex flex-col justify-center">
-        <h1 className="relative z-10 text-xl text-center text-gray-900 dark:text-white font-bold">
-          What does your financial goal look like?
-        </h1>
-      </div>
+      <h1 className="w-full flex flex-col justify-center text-xl text-center text-gray-900 dark:text-white font-bold">
+        What does your financial goal look like?
+      </h1>
 
       {/* PAYMENTS (active above & inactive below) */}
       <div className="flex-1 overflow-y-auto">

@@ -54,22 +54,18 @@ export default function PasswordReset() {
         {message && <Message message={message} />}
       </div>
 
-      <div className="text-center mt-2 dark:text-white">
-        <p>
-          Remembered your password?{" "}
-          <Link to="/login" className="text-blue-500">
-            Log In
-          </Link>
-        </p>
-      </div>
-      <div className="text-center mt-2 dark:text-white">
-        <p>
-          Don't have an account?{" "}
-          <Link to="/signup" className="text-blue-500">
-            Sign Up
-          </Link>
-        </p>
-      </div>
+      <p className="text-center mt-2 dark:text-white">
+        Remembered your password?{" "}
+        <Link to="/login" className="text-blue-500">
+          Log In
+        </Link>
+      </p>
+      <p className="text-center mt-2 dark:text-white">
+        Don't have an account?{" "}
+        <Link to="/signup" className="text-blue-500">
+          Sign Up
+        </Link>
+      </p>
     </>
   );
 }

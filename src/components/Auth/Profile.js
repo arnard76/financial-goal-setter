@@ -37,6 +37,9 @@ export default function Profile() {
           Log Out
         </Link>
       </div>
+      <div className=" text-blue-500 text-center mt-2">
+        <Link to="/">Go Back</Link>
+      </div>
     </>
   );
 }

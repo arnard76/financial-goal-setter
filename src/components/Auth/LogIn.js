@@ -77,22 +77,18 @@ export default function LogIn() {
         {error && <Message type="error" message={error} />}
       </div>
 
-      <div className="text-center mt-2 dark:text-white">
-        <p>
-          Forgot your password?{" "}
-          <Link to="/forgot-password" className="text-blue-500">
-            Reset Password
-          </Link>
-        </p>
-      </div>
-      <div className="text-center mt-2 dark:text-white">
-        <p>
-          Don't have an account?{" "}
-          <Link to="/signup" className="text-blue-500">
-            Sign Up
-          </Link>
-        </p>
-      </div>
+      <p className="text-center mt-2 dark:text-white">
+        Forgot your password?{" "}
+        <Link to="/forgot-password" className="text-blue-500">
+          Reset Password
+        </Link>
+      </p>
+      <p className="text-center mt-2 dark:text-white">
+        Don't have an account?{" "}
+        <Link to="/signup" className="text-blue-500">
+          Sign Up
+        </Link>
+      </p>
     </>
   );
 }

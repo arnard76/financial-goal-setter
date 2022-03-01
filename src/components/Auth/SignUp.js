@@ -83,14 +83,12 @@ export default function SignUp() {
         {error && <Message type="error" message={error} />}
       </div>
 
-      <div className="text-center mt-2 dark:text-white">
-        <p>
-          Already have an account?{" "}
-          <Link to="/login" className="text-blue-500">
-            Login
-          </Link>
-        </p>
-      </div>
+      <p className="text-center mt-2 dark:text-white">
+        Already have an account?{" "}
+        <Link to="/login" className="text-blue-500">
+          Login
+        </Link>
+      </p>
     </>
   );
 }
