@@ -128,7 +128,7 @@ export default function EditPaymentModal({ isOpen, setOpen, payment }) {
   }, [inputValues.start, inputValues.end, inputValues.frequency]);
 
   return (
-    <Modal isOpen={isOpen} setOpen={setOpen}>
+    <Modal isOpen={isOpen} setOpen={setOpen} title={`Editing: ${payment.name}`}>
       <form className="flex flex-col">
         {/* COMMON INPUTS */}
         <FormGroup label="Notes">

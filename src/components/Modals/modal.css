@@ -1,0 +1,33 @@
+/* @tailwind base; */
+@tailwind components;
+/* @tailwind utilities; */
+
+@layer components {
+  .modal {
+    z-index: 999;
+    grid-template-columns: 1fr 40rem 1fr;
+    grid-template-rows: 38px 1fr;
+    width: 100vw;
+
+    @apply absolute inset-0 grid;
+  }
+
+  .modal > * {
+    overflow: hidden;
+  }
+
+  .modal-title {
+    @apply text-xl mt-2 font-bold text-gray-900 dark:text-white col-start-2;
+  }
+
+  .modal-body {
+    width: 35rem;
+    max-width: 60vw;
+
+    @apply bg-gray-100 dark:bg-gray-800 p-4 my-4 overflow-x-hidden overflow-y-auto row-start-2  col-start-2;
+  }
+
+  .modal-close {
+    @apply flex bg-black bg-opacity-90 inset-0 absolute z-[-1] cursor-pointer;
+  }
+}

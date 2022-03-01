@@ -103,7 +103,7 @@ export default function AddPaymentModal({ isOpen, setOpen }) {
   }, [inputValues.start, inputValues.end, inputValues.frequency]);
 
   return (
-    <Modal isOpen={isOpen} setOpen={setOpen}>
+    <Modal isOpen={isOpen} setOpen={setOpen} title="Add a payment">
       <form className="flex flex-col">
         {/* COMMON INPUTS */}
         <FormGroup label="Notes">

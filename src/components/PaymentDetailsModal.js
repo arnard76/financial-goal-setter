@@ -13,7 +13,7 @@ export default function PaymentDetailsModal({ isOpen, setOpen, payment }) {
     endDate = new Date(end[2], end[1], end[0]);
   }
   return (
-    <Modal isOpen={isOpen} setOpen={setOpen}>
+    <Modal isOpen={isOpen} setOpen={setOpen} title={`Viewing: ${payment.name}`}>
       <div className="dark:text-white">
         <p className="text-2xl">{name}</p>
         <p>Notes: {notes}</p>

@@ -33,10 +33,12 @@ export function ModalsProvider({ children }) {
 
   return (
     <ModalsContext.Provider value={modalsDetails}>
-      <AddPaymentModal
-        isOpen={isAddPaymentModalOpen}
-        setOpen={setAddPaymentModalOpen}
-      />
+      {isAddPaymentModalOpen && (
+        <AddPaymentModal
+          isOpen={isAddPaymentModalOpen}
+          setOpen={setAddPaymentModalOpen}
+        />
+      )}
       {viewingPayment.id && !editingPayment.id && (
         <PaymentDetailsModal
           isOpen={viewingPayment.id}
