@@ -8,20 +8,6 @@ export default function Payments() {
   let { userDetails, filteredPayments, payments, periodTotal, calcOccurances } =
     usePayments();
 
-  const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
   let {
     "period start date": periodStartDate,
     "period end date": periodEndDate,

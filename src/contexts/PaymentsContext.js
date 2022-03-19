@@ -87,7 +87,7 @@ export function PaymentsProvider({ children }) {
   function filterToActivePayments(startDateLimit, endDateLimit) {
     // e.g. 21 or 5 => "21" or "05"
     function formatTo2Digits(number) {
-      return number.length === 1 ? "0" + number : number;
+      return Math.floor(number / 10) === 0 ? "0" + number : number;
     }
 
     startDateLimit =
@@ -208,7 +208,6 @@ export function PaymentsProvider({ children }) {
   }
 
   async function deletePayment(paymentId) {
-    // console.log("I promise I will delete payment ", paymentId);
     try {
       // delete doc from firestore db
       await deleteDoc(doc(db, "payments", paymentId));
@@ -238,7 +237,6 @@ export function PaymentsProvider({ children }) {
 
     for (let index = 0; index < payments.length; index++) {
       let payment = payments[index];
-      console.log(payment);
       if (payment.frequency === null) {
         // One-off
         total += payment.amount;
@@ -277,26 +275,25 @@ export function PaymentsProvider({ children }) {
 
   function calcOccurances(frequency, start, end) {
     // re-calc # of occurances when freq or end/start change
-    console.log("freq:", frequency, "   end:", end, "      start", start);
 
     let diff = calcPaymentDuration(start, end);
     let occurances =
       frequency[0] *
       Math.floor(diff / (numDaysInPeriod(frequency[2]) * frequency[1]));
-    console.log(
-      // "start:",
-      // start,
-      // "\nend:",
-      // end,
-      "\nfreq:",
-      frequency,
-      "\ndiff:",
-      diff,
-      "\noccurances:",
-      occurances
-      // "\nmultiplier:",
-      // numDaysInPeriod(frequency[2])
-    );
+    // console.log(
+    //   // "start:",
+    //   // start,
+    //   // "\nend:",
+    //   // end,
+    //   "\nfreq:",
+    //   frequency,
+    //   "\ndiff:",
+    //   diff,
+    //   "\noccurances:",
+    //   occurances
+    //   // "\nmultiplier:",
+    //   // numDaysInPeriod(frequency[2])
+    // );
     return occurances;
   }
 
