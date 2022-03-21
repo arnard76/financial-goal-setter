@@ -311,13 +311,21 @@ export function PaymentsProvider({ children }) {
   // keeps filteredPayments updated
   useEffect(() => {
     if (!loading) {
+      calcPeriodTotal(payments, userDetails);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [payments, loading]);
+
+  // keeps total updated
+  useEffect(() => {
+    if (!loading) {
       filterToActivePayments(
         userDetails["period start date"],
         userDetails["period end date"]
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [payments, loading]);
+  }, [filteredPayments, loading]);
 
   // keeps total updated
   useEffect(() => {
