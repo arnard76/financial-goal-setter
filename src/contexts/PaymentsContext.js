@@ -235,8 +235,8 @@ export function PaymentsProvider({ children }) {
   function calcPeriodTotal() {
     let total = 0.0;
 
-    for (let index = 0; index < payments.length; index++) {
-      let payment = payments[index];
+    for (let index = 0; index < filteredPayments.length; index++) {
+      let payment = filteredPayments[index];
       if (payment.frequency === null) {
         // One-off
         total += payment.amount;
@@ -311,7 +311,6 @@ export function PaymentsProvider({ children }) {
   // keeps filteredPayments updated
   useEffect(() => {
     if (!loading) {
-      calcPeriodTotal(payments, userDetails);
       filterToActivePayments(
         userDetails["period start date"],
         userDetails["period end date"]
@@ -319,6 +318,17 @@ export function PaymentsProvider({ children }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [payments, loading]);
+
+  // keeps total updated
+  useEffect(() => {
+    if (!loading) {
+      calcPeriodTotal(
+        userDetails["period start date"],
+        userDetails["period end date"]
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filteredPayments, loading]);
 
   // all useful values/functions related to authentication
   const paymentDetails = {
