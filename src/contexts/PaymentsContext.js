@@ -1,6 +1,8 @@
 import React, { useState, useContext, useEffect } from "react";
 import { useAuth } from "./AuthContext";
 
+import { Temporal } from "@js-temporal/polyfill";
+
 //firestore imports
 import {
   collection,
@@ -32,7 +34,6 @@ export function PaymentsProvider({ children }) {
 
   const [loading, setLoading] = useState(true);
   const [payments, setPayments] = useState([]);
-  const [filteredPayments, setFilteredPayments] = useState([]);
   const [userDetails, setUserDetails] = useState();
   const [periodTotal, setPeriodTotal] = useState(0);
 
@@ -81,48 +82,6 @@ export function PaymentsProvider({ children }) {
       (error) => {
         console.log("onSnapshot failed: ", error);
       }
-    );
-  }
-
-  function filterToActivePayments(startDateLimit, endDateLimit) {
-    // e.g. 21 or 5 => "21" or "05"
-    function formatTo2Digits(number) {
-      return Math.floor(number / 10) === 0 ? "0" + number : number;
-    }
-
-    startDateLimit =
-      startDateLimit[2].toString() +
-      formatTo2Digits(startDateLimit[1]) +
-      formatTo2Digits(startDateLimit[0]);
-
-    endDateLimit =
-      endDateLimit[2].toString() +
-      formatTo2Digits(endDateLimit[1]) +
-      formatTo2Digits(endDateLimit[0]);
-
-    setFilteredPayments(
-      payments.filter((payment) => {
-        let paymentStartDate =
-          payment.start[2].toString() +
-          formatTo2Digits(payment.start[1]) +
-          formatTo2Digits(payment.start[0]);
-
-        let paymentEndDate;
-        if (!payment.frequency) {
-          paymentEndDate = paymentStartDate;
-        } else if (!payment.end) {
-          paymentEndDate = endDateLimit;
-        } else {
-          paymentEndDate =
-            payment.end[2].toString() +
-            formatTo2Digits(payment.end[1]) +
-            formatTo2Digits(payment.end[0]);
-        }
-        return (
-          paymentStartDate - startDateLimit >= 0 &&
-          paymentEndDate - endDateLimit <= 0
-        );
-      })
     );
   }
 
@@ -218,6 +177,139 @@ export function PaymentsProvider({ children }) {
     }
   }
 
+  // calculates the total of all filteredPayments
+  // between period start and end
+  // period can be any period, default is user financial period
+  function calcPeriodTotal(
+    periodStart = userDetails["period start date"],
+    periodEnd = userDetails["period end date"]
+  ) {
+    let filteredPayments = dateFilterPayments(periodStart, periodEnd);
+    let total = 0.0;
+    periodStart = new Temporal.PlainDate(
+      periodStart[2],
+      periodStart[1] + 1,
+      periodStart[0]
+    );
+    periodEnd = new Temporal.PlainDate(
+      periodEnd[2],
+      periodEnd[1] + 1,
+      periodEnd[0]
+    );
+
+    for (let index = 0; index < filteredPayments.length; index++) {
+      let payment = filteredPayments[index];
+      if (payment.frequency === null) {
+        // One-off
+        total += payment.amount;
+      } else if (payment.end === null) {
+        // Continuous
+        let paymentStart = new Temporal.PlainDate(
+          payment.start[2],
+          payment.start[1] + 1,
+          payment.start[0]
+        );
+
+        while (Temporal.PlainDate.compare(paymentStart, periodStart) === -1) {
+          paymentStart = paymentStart.add({
+            [payment.frequency[2] + "s"]: payment.frequency[1],
+          });
+          if (Temporal.PlainDate.compare(paymentStart, periodEnd) === -1) {
+            break;
+          }
+        }
+
+        if (Temporal.PlainDate.compare(paymentStart, periodEnd) === 1) {
+          continue;
+        }
+        total +=
+          payment.amount *
+          calcOccurances(
+            payment.frequency,
+            [paymentStart.day, paymentStart.month - 1, paymentStart.year],
+            [periodEnd.day, periodEnd.month - 1, periodEnd.year]
+          );
+      } else {
+        // Repeated
+
+        let paymentStart = new Temporal.PlainDate(
+          payment.start[2],
+          payment.start[1] + 1,
+          payment.start[0]
+        );
+
+        let paymentEnd = new Temporal.PlainDate(
+          payment.end[2],
+          payment.end[1] + 1,
+          payment.end[0]
+        );
+
+        while (Temporal.PlainDate.compare(paymentStart, periodStart) === -1) {
+          paymentStart = paymentStart.add({
+            [payment.frequency[2] + "s"]: payment.frequency[1],
+          });
+        }
+        while (Temporal.PlainDate.compare(paymentEnd, periodEnd) === 1) {
+          paymentEnd = paymentEnd.subtract({
+            [payment.frequency[2] + "s"]: payment.frequency[1],
+          });
+        }
+
+        total +=
+          payment.amount *
+          calcOccurances(
+            payment.frequency,
+            [paymentStart.day, paymentStart.month - 1, paymentStart.year],
+            [paymentEnd.day, paymentEnd.month - 1, paymentEnd.year]
+          );
+      }
+    }
+    return total;
+  }
+
+  function calcPaymentDuration(start, end) {
+    start = new Date(start[2], start[1], start[0]);
+    end = new Date(end[2], end[1], end[0]);
+
+    if (start > end) {
+      throw RangeError("end date is earlier than start date!");
+    }
+
+    // console.log("start", start, "\nend", end);
+    let paymentDuration = 1;
+    paymentDuration += (end - start) / 86400000;
+    return paymentDuration;
+  }
+
+  function calcOccurances(frequency, start, end) {
+    // calc # of occurances of payment
+    try {
+      let diff = calcPaymentDuration(start, end);
+      let occurances =
+        frequency[0] *
+        Math.floor(diff / (numDaysInPeriod(frequency[2]) * frequency[1]));
+
+      // console.log(
+      //   "start:",
+      //   start,
+      //   "\nend:",
+      //   end,
+      //   "\nfreq:",
+      //   frequency,
+      //   "\ndiff:",
+      //   diff,
+      //   "\noccurances:",
+      //   occurances
+      //   // "\nmultiplier:",
+      //   // numDaysInPeriod(frequency[2])
+      // );
+
+      return occurances;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   function numDaysInPeriod(period) {
     let numDays;
     if (period === "day") {
@@ -232,71 +324,51 @@ export function PaymentsProvider({ children }) {
     return numDays;
   }
 
-  function calcPeriodTotal() {
-    let total = 0.0;
+  // e.g. 21 or 5 => "21" or "05"
+  function formatTo2Digits(number) {
+    return Math.floor(number / 10) === 0 ? "0" + number : number;
+  }
 
-    for (let index = 0; index < filteredPayments.length; index++) {
-      let payment = filteredPayments[index];
-      if (payment.frequency === null) {
-        // One-off
-        total += payment.amount;
-      } else if (payment.end === null) {
-        // Continuous
-        total +=
-          payment.amount *
-          calcOccurances(
-            payment.frequency,
-            payment.start,
-            userDetails["period end date"]
-          );
+  // returns list of payments that are within startDateLimit
+  // if the end date is before period start or...
+  // start date is after period, then
+  function dateFilterPayments(
+    startDateLimit = userDetails["period start date"],
+    endDateLimit = userDetails["period end date"]
+  ) {
+    startDateLimit =
+      startDateLimit[2].toString() +
+      formatTo2Digits(startDateLimit[1]) +
+      formatTo2Digits(startDateLimit[0]);
+
+    endDateLimit =
+      endDateLimit[2].toString() +
+      formatTo2Digits(endDateLimit[1]) +
+      formatTo2Digits(endDateLimit[0]);
+
+    return payments.filter((payment) => {
+      let paymentStartDate =
+        payment.start[2].toString() +
+        formatTo2Digits(payment.start[1]) +
+        formatTo2Digits(payment.start[0]);
+
+      let paymentEndDate;
+      if (!payment.frequency) {
+        paymentEndDate = paymentStartDate;
+      } else if (!payment.end) {
+        paymentEndDate = endDateLimit;
       } else {
-        // Repeated
-        total +=
-          payment.amount *
-          calcOccurances(payment.frequency, payment.start, payment.end);
+        paymentEndDate =
+          payment.end[2].toString() +
+          formatTo2Digits(payment.end[1]) +
+          formatTo2Digits(payment.end[0]);
       }
-    }
-    setPeriodTotal(total);
+      let paymentPeriodOutsideFilterPeriod =
+        paymentStartDate > endDateLimit || paymentEndDate < startDateLimit;
+
+      return !paymentPeriodOutsideFilterPeriod;
+    });
   }
-
-  // assume end is later than start date
-  function calcPaymentDuration(start, end) {
-    // const daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-    // const daysInMonthLeapyear = [
-    //   31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31,
-    // ];
-    let paymentDuration = 1;
-    start = new Date(start[2], start[1], start[0]);
-    end = new Date(end[2], end[1], end[0]);
-    // console.log("start", start, "\nend", end);
-    paymentDuration += (end - start) / 86400000;
-    return paymentDuration;
-  }
-
-  function calcOccurances(frequency, start, end) {
-    // re-calc # of occurances when freq or end/start change
-
-    let diff = calcPaymentDuration(start, end);
-    let occurances =
-      frequency[0] *
-      Math.floor(diff / (numDaysInPeriod(frequency[2]) * frequency[1]));
-    // console.log(
-    //   // "start:",
-    //   // start,
-    //   // "\nend:",
-    //   // end,
-    //   "\nfreq:",
-    //   frequency,
-    //   "\ndiff:",
-    //   diff,
-    //   "\noccurances:",
-    //   occurances
-    //   // "\nmultiplier:",
-    //   // numDaysInPeriod(frequency[2])
-    // );
-    return occurances;
-  }
-
   // keeps user details & payments up to date
   useEffect(() => {
     let unsubscribe = getPayments();
@@ -308,41 +380,23 @@ export function PaymentsProvider({ children }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // keeps filteredPayments updated
+  // keeps total updated
   useEffect(() => {
     if (!loading) {
-      calcPeriodTotal(payments, userDetails);
+      setPeriodTotal(
+        calcPeriodTotal(
+          userDetails["period start date"],
+          userDetails["period end date"]
+        )
+      );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [payments, loading]);
 
-  // keeps total updated
-  useEffect(() => {
-    if (!loading) {
-      filterToActivePayments(
-        userDetails["period start date"],
-        userDetails["period end date"]
-      );
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filteredPayments, loading]);
-
-  // keeps total updated
-  useEffect(() => {
-    if (!loading) {
-      calcPeriodTotal(
-        userDetails["period start date"],
-        userDetails["period end date"]
-      );
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filteredPayments, loading]);
-
-  // all useful values/functions related to authentication
+  // all useful values/functions related to payments
   const paymentDetails = {
     userDetails,
     payments,
-    filteredPayments,
 
     addPayment,
     deletePayment,
@@ -350,10 +404,12 @@ export function PaymentsProvider({ children }) {
 
     periodTotal,
     calcOccurances,
+    calcPeriodTotal,
+    dateFilterPayments,
   };
 
   return (
-    // provides auth details to all of the children components
+    // provides payments details to all of the children components
     <>
       {!loading && (
         <PaymentsContext.Provider value={paymentDetails}>

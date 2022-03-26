@@ -6,29 +6,7 @@ import GeneralSettingsForm from "./Forms/SettingsForm";
 import Tooltip from "./Tooltip";
 
 export default function Sidebar() {
-  function handleClickNavIcon(event, tabName) {
-    var clickedIcon = event.currentTarget;
-    var navIcons = document.querySelectorAll("nav .nav-icon");
-    var clickedTab = document.querySelector("#" + tabName + "-tab");
-    var navTabs = document.querySelectorAll("#add-tab, #settings-tab");
-
-    // toggle the tab (and close any others)
-    if (clickedTab.classList.contains("active")) {
-      clickedTab.classList.remove("active");
-      clickedIcon.classList.remove("active");
-    } else {
-      navTabs.forEach((tab) => {
-        tab.classList.remove("active");
-      });
-      navIcons.forEach((icon) => {
-        icon.classList.remove("active");
-      });
-      clickedIcon.classList.add("active");
-      clickedTab.classList.add("active");
-    }
-  }
-
-  const { setAddPaymentModalOpen } = useModals();
+  const { setAddPaymentModalOpen, setPaymentGraphModalOpen } = useModals();
 
   return (
     <div className="h-screen flex">
@@ -40,6 +18,13 @@ export default function Sidebar() {
         >
           <i className="fa fa-plus fa-2x" aria-hidden="true"></i>
           <Tooltip text="Add" />
+        </div>
+        <div
+          className="button nav-icon group"
+          onClick={() => setPaymentGraphModalOpen(true)}
+        >
+          <i className="fa fa-bar-chart fa-2x" aria-hidden="true"></i>
+          <Tooltip text="Graph" />
         </div>
         {/* <div
           className="button nav-icon group"

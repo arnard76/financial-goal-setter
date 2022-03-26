@@ -2,7 +2,8 @@ import React, { useState, useContext } from "react";
 
 import AddPaymentModal from "../components/Modals/AddPaymentModal";
 import EditPaymentModal from "../components/Modals/EditPaymentModal";
-import PaymentDetailsModal from "../components/PaymentDetailsModal";
+import PaymentDetailsModal from "../components/Modals/PaymentDetailsModal";
+import PaymentsGraphModal from "../components/Modals/PaymentsGraphModal";
 
 const ModalsContext = React.createContext();
 
@@ -20,6 +21,8 @@ export function ModalsProvider({ children }) {
   const [viewingPayment, setViewingPayment] = useState({ id: null });
   const [editingPayment, setEditingPayment] = useState({ id: null });
 
+  const [isPaymentGraphModalOpen, setPaymentGraphModalOpen] = useState(false);
+
   let modalsDetails = {
     isAddPaymentModalOpen,
     setAddPaymentModalOpen,
@@ -29,6 +32,9 @@ export function ModalsProvider({ children }) {
 
     editingPayment,
     setEditingPayment,
+
+    setPaymentGraphModalOpen,
+    isPaymentGraphModalOpen,
   };
 
   return (
@@ -53,6 +59,13 @@ export function ModalsProvider({ children }) {
           setOpen={() => setEditingPayment({ id: null })}
         />
       )}
+      {isPaymentGraphModalOpen && (
+        <PaymentsGraphModal
+          isOpen={isPaymentGraphModalOpen}
+          setOpen={setPaymentGraphModalOpen}
+        />
+      )}
+
       {children}
     </ModalsContext.Provider>
   );

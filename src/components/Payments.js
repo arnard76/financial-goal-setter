@@ -5,8 +5,13 @@ import { useModals } from "../contexts/ModalsContext";
 
 export default function Payments() {
   const { setViewingPayment } = useModals();
-  let { userDetails, filteredPayments, payments, periodTotal, calcOccurances } =
-    usePayments();
+  let {
+    userDetails,
+    payments,
+    dateFilterPayments,
+    periodTotal,
+    calcOccurances,
+  } = usePayments();
 
   let {
     "period start date": periodStartDate,
@@ -33,7 +38,7 @@ export default function Payments() {
 
       {/* PAYMENTS (active above & inactive below) */}
       <div className="flex-1 overflow-y-auto">
-        {filteredPayments
+        {dateFilterPayments()
           .sort((a, b) => {
             let aFreq = a.frequency
               ? calcOccurances(
@@ -63,7 +68,7 @@ export default function Payments() {
           })}
 
         {payments
-          .filter((payment) => !filteredPayments.includes(payment))
+          .filter((payment) => !dateFilterPayments().includes(payment))
           .map((payment) => {
             return (
               <Payment

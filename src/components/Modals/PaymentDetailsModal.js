@@ -1,12 +1,12 @@
-import { usePayments } from "../contexts/PaymentsContext";
-import { useModals } from "../contexts/ModalsContext";
-import Modal from "./Modals/Modal";
+import { usePayments } from "../../contexts/PaymentsContext";
+import { useModals } from "../../contexts/ModalsContext";
+import Modal from "./Modal";
 
 export default function PaymentDetailsModal({ isOpen, setOpen, payment }) {
   const { setEditingPayment, setViewingPayment } = useModals();
 
-  const { deletePayment } = usePayments();
-  const { id, name, notes, start, end, frequency } = payment;
+  const { deletePayment, calcOccurances, userDetails } = usePayments();
+  const { id, name, notes, start, end, frequency, amount } = payment;
   let startDate = new Date(start[2], start[1], start[0]);
   let endDate;
   if (end !== null) {
@@ -17,13 +17,22 @@ export default function PaymentDetailsModal({ isOpen, setOpen, payment }) {
       <div className="dark:text-white">
         <p className="text-2xl">{name}</p>
         <p>Notes: {notes}</p>
+        <p>Amount: {amount}</p>
         {frequency !== null ? (
-          <p>
-            Frequency: {frequency[0]}
-            {` time${frequency[0] === 1 ? "" : "s"} every `} {frequency[1]}{" "}
-            {frequency[2]}
-            {frequency[1] === 1 ? "" : "s"}
-          </p>
+          <>
+            <p>
+              Frequency: {frequency[0]}
+              {` time${frequency[0] === 1 ? "" : "s"} every `} {frequency[1]}{" "}
+              {frequency[2]}
+              {frequency[1] === 1 ? "" : "s"} (occurs{" "}
+              {calcOccurances(
+                frequency,
+                start,
+                end ? end : userDetails["period end date"]
+              )}{" "}
+              times )
+            </p>
+          </>
         ) : (
           <p>Frequency: One-off</p>
         )}
