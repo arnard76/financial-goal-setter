@@ -13,7 +13,7 @@ import { usePayments } from "../../contexts/PaymentsContext";
 export default function PaymentsGraphModal({ isOpen, setOpen }) {
   const { calcPeriodTotal, userDetails } = usePayments();
   let [day, month, year] = userDetails["period start date"];
-  const startDate = new Temporal.PlainDate(year, month + 1, day);
+  const startDate = new Temporal.PlainDate(year, month, day);
   let chartData = {
     labels: [...Array(52 + 1).keys()].slice(1),
     datasets: [
@@ -22,19 +22,8 @@ export default function PaymentsGraphModal({ isOpen, setOpen }) {
         data: [...Array(52).keys()].map((weekNumber) => {
           let start = startDate.add({ weeks: weekNumber });
           let end = start.add({ days: 6 });
-          start = [start.day, start.month - 1, start.year];
-          end = [end.day, end.month - 1, end.year];
-          // console.log(
-          //   "week",
-          //   weekNumber,
-          //   "start",
-          //   start,
-          //   "end",
-          //   end,
-          //   "total",
-          //   calcPeriodTotal(start, end),
-          //   "\n"
-          // );
+          start = [start.day, start.month, start.year];
+          end = [end.day, end.month, end.year];
           return calcPeriodTotal(start, end);
         }),
         backgroundColor: [

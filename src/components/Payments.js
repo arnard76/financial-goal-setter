@@ -2,6 +2,7 @@ import React from "react";
 import Payment from "./Payment";
 import { usePayments } from "../contexts/PaymentsContext";
 import { useModals } from "../contexts/ModalsContext";
+import { Temporal } from "@js-temporal/polyfill";
 
 export default function Payments() {
   const { setViewingPayment } = useModals();
@@ -17,13 +18,13 @@ export default function Payments() {
     "period start date": periodStartDate,
     "period end date": periodEndDate,
   } = userDetails;
-  periodStartDate = new Date(
+  periodStartDate = new Temporal.PlainDate(
     periodStartDate[2],
     periodStartDate[1],
     periodStartDate[0]
   );
 
-  periodEndDate = new Date(
+  periodEndDate = new Temporal.PlainDate(
     periodEndDate[2],
     periodEndDate[1],
     periodEndDate[0]
@@ -85,17 +86,9 @@ export default function Payments() {
       <div className="flex justify-around px-16 py-2  border-blue-400 border-solid border-t-4 dark:text-white">
         <div className="flex items-center">
           <p>
-            {periodStartDate.getDate()}
-            {"/"}
-            {periodStartDate.getMonth() + 1}
-            {"/"}
-            {periodStartDate.getFullYear()}
+            {periodStartDate.toLocaleString("en-NZ")}
             {" to "}
-            {periodEndDate.getDate()}
-            {"/"}
-            {periodEndDate.getMonth() + 1}
-            {"/"}
-            {periodEndDate.getFullYear()}
+            {periodEndDate.toLocaleString("en-NZ")}
           </p>
         </div>
         <p>Sum: ${periodTotal.toFixed(2)}</p>

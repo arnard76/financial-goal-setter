@@ -1,16 +1,17 @@
 import { usePayments } from "../../contexts/PaymentsContext";
 import { useModals } from "../../contexts/ModalsContext";
 import Modal from "./Modal";
+import { Temporal } from "@js-temporal/polyfill";
 
 export default function PaymentDetailsModal({ isOpen, setOpen, payment }) {
   const { setEditingPayment, setViewingPayment } = useModals();
 
   const { deletePayment, calcOccurances, userDetails } = usePayments();
   const { id, name, notes, start, end, frequency, amount } = payment;
-  let startDate = new Date(start[2], start[1], start[0]);
+  let startDate = new Temporal.PlainDate(start[2], start[1], start[0]);
   let endDate;
   if (end !== null) {
-    endDate = new Date(end[2], end[1], end[0]);
+    endDate = new Temporal.PlainDate(end[2], end[1], end[0]);
   }
   return (
     <Modal isOpen={isOpen} setOpen={setOpen} title={`Viewing: ${payment.name}`}>
@@ -36,8 +37,8 @@ export default function PaymentDetailsModal({ isOpen, setOpen, payment }) {
         ) : (
           <p>Frequency: One-off</p>
         )}
-        <p>Start: {startDate.toDateString()}</p>
-        {end !== null ? <p>End: {endDate.toDateString()}</p> : <></>}
+        <p>Start: {startDate.toLocaleString("en-NZ")}</p>
+        {end !== null ? <p>End: {endDate.toLocaleString("en-NZ")}</p> : <></>}
       </div>
       <div
         className="button mt-4"

@@ -6,6 +6,7 @@ import FormGroup from "../FormGroup2";
 import Modal from "./Modal";
 
 import { usePayments } from "../../contexts/PaymentsContext";
+import { Temporal } from "@js-temporal/polyfill";
 
 export default function AddPaymentModal({ isOpen, setOpen }) {
   // to control form inputs/actions
@@ -14,7 +15,7 @@ export default function AddPaymentModal({ isOpen, setOpen }) {
   const [message, setMessage] = useState("");
 
   // to store form inputs/default inputs
-  const date = new Date();
+  const date = Temporal.Now.plainDateISO();
   const initialInputValues = {
     name: "",
     amount: 0,
@@ -24,13 +25,13 @@ export default function AddPaymentModal({ isOpen, setOpen }) {
     frequency: [1, 30, "day"],
     notes: "",
     start:
-      date.getFullYear() +
+      date.year +
       "-" +
-      +(date.getMonth() + 1 > 9
-        ? date.getMonth() + 1
-        : "0" + (date.getMonth() + 1)) +
+      +(date.month > 9 ? "" : "0") +
+      date.month +
       "-" +
-      (date.getDate() > 9 ? date.getDate() : "0" + date.getDate()),
+      (date.day > 9 ? "" : "0") +
+      date.day,
     end: "",
     occurances: 0,
   };
@@ -50,7 +51,6 @@ export default function AddPaymentModal({ isOpen, setOpen }) {
         for (let count = 0; count < 3; count++) {
           end[count] = parseInt(end[count]);
         }
-        end[1] = end[1] - 1;
       } catch (e) {
         console.log(e);
       }
@@ -58,7 +58,6 @@ export default function AddPaymentModal({ isOpen, setOpen }) {
     for (let count = 0; count < 3; count++) {
       start[count] = parseInt(start[count]);
     }
-    start[1] = start[1] - 1;
 
     if (frequency === "") {
       frequency = null;
@@ -92,7 +91,6 @@ export default function AddPaymentModal({ isOpen, setOpen }) {
       inputValues.start !== "" &&
       inputValues.end !== ""
     ) {
-      console.log("happenign");
       const { frequency, start, end } = cleanPaymentFields(inputValues);
       setInputValues({
         ...inputValues,

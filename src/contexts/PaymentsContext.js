@@ -369,6 +369,7 @@ export function PaymentsProvider({ children }) {
       return !paymentPeriodOutsideFilterPeriod;
     });
   }
+
   // keeps user details & payments up to date
   useEffect(() => {
     let unsubscribe = getPayments();

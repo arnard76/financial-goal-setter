@@ -29,33 +29,26 @@ export default function EditPaymentModal({ isOpen, setOpen, payment }) {
     start:
       payment.start[2] +
       "-" +
-      (payment.start[1] + 1 > 9
-        ? payment.start[1] + 1
-        : "0" + (payment.start[1] + 1)) +
+      (payment.start[1] > 9 ? "" : "0") +
+      payment.start[1] +
       "-" +
-      (payment.start[0] > 9 ? payment.start[0] : "0" + payment.start[0]),
-    end: payment.end === null ? payment.end : "",
+      (payment.start[0] > 9 ? "" : "0") +
+      payment.start[0],
+    end:
+      payment.end === null
+        ? ""
+        : payment.end[2] +
+          "-" +
+          (payment.end[1] > 9 ? "" : "0") +
+          payment.end[1] +
+          "-" +
+          (payment.end[0] > 9 ? "" : "0") +
+          payment.end[0],
     occurances: 0,
   };
-  let date = new Date();
   const defaultInputValues = {
-    name: "",
-    amount: 0,
-    type: "Continuous",
-    tempType: "",
     // 1 occurances every 30 days
     frequency: [1, 30, "day"],
-    notes: "",
-    start:
-      date.getFullYear() +
-      "-" +
-      +(date.getMonth() + 1 > 9
-        ? date.getMonth() + 1
-        : "0" + (date.getMonth() + 1)) +
-      "-" +
-      (date.getDate() > 9 ? date.getDate() : "0" + date.getDate()),
-    end: "",
-    occurances: 0,
   };
   const [inputValues, setInputValues] = useState(initialInputValues);
 
@@ -73,7 +66,6 @@ export default function EditPaymentModal({ isOpen, setOpen, payment }) {
         for (let count = 0; count < 3; count++) {
           end[count] = parseInt(end[count]);
         }
-        end[1] = end[1] - 1;
       } catch (e) {
         console.log(e);
       }
@@ -81,7 +73,6 @@ export default function EditPaymentModal({ isOpen, setOpen, payment }) {
     for (let count = 0; count < 3; count++) {
       start[count] = parseInt(start[count]);
     }
-    start[1] = start[1] - 1;
 
     if (frequency === "") {
       frequency = null;
@@ -117,7 +108,6 @@ export default function EditPaymentModal({ isOpen, setOpen, payment }) {
       inputValues.start !== "" &&
       inputValues.end !== ""
     ) {
-      console.log("happenign");
       const { frequency, start, end } = cleanPaymentFields(inputValues);
       setInputValues({
         ...inputValues,
