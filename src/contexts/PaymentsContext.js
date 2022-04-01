@@ -186,16 +186,6 @@ export function PaymentsProvider({ children }) {
   ) {
     let filteredPayments = dateFilterPayments(periodStart, periodEnd);
     let total = 0.0;
-    periodStart = new Temporal.PlainDate(
-      periodStart[2],
-      periodStart[1] + 1,
-      periodStart[0]
-    );
-    periodEnd = new Temporal.PlainDate(
-      periodEnd[2],
-      periodEnd[1] + 1,
-      periodEnd[0]
-    );
 
     for (let index = 0; index < filteredPayments.length; index++) {
       let payment = filteredPayments[index];
@@ -204,110 +194,99 @@ export function PaymentsProvider({ children }) {
         total += payment.amount;
       } else if (payment.end === null) {
         // Continuous
-        let paymentStart = new Temporal.PlainDate(
-          payment.start[2],
-          payment.start[1] + 1,
-          payment.start[0]
-        );
 
-        while (Temporal.PlainDate.compare(paymentStart, periodStart) === -1) {
-          paymentStart = paymentStart.add({
-            [payment.frequency[2] + "s"]: payment.frequency[1],
-          });
-          if (Temporal.PlainDate.compare(paymentStart, periodEnd) === -1) {
-            break;
-          }
-        }
-
-        if (Temporal.PlainDate.compare(paymentStart, periodEnd) === 1) {
-          continue;
-        }
         total +=
           payment.amount *
-          calcOccurances(
+          occurancesInPeriod(
+            payment.start,
+            payment.end,
             payment.frequency,
-            [paymentStart.day, paymentStart.month - 1, paymentStart.year],
-            [periodEnd.day, periodEnd.month - 1, periodEnd.year]
+            periodStart,
+            periodEnd
           );
       } else {
         // Repeated
 
-        let paymentStart = new Temporal.PlainDate(
-          payment.start[2],
-          payment.start[1] + 1,
-          payment.start[0]
-        );
-
-        let paymentEnd = new Temporal.PlainDate(
-          payment.end[2],
-          payment.end[1] + 1,
-          payment.end[0]
-        );
-
-        while (Temporal.PlainDate.compare(paymentStart, periodStart) === -1) {
-          paymentStart = paymentStart.add({
-            [payment.frequency[2] + "s"]: payment.frequency[1],
-          });
-        }
-        while (Temporal.PlainDate.compare(paymentEnd, periodEnd) === 1) {
-          paymentEnd = paymentEnd.subtract({
-            [payment.frequency[2] + "s"]: payment.frequency[1],
-          });
-        }
-
         total +=
           payment.amount *
-          calcOccurances(
+          occurancesInPeriod(
+            payment.start,
+            payment.end,
             payment.frequency,
-            [paymentStart.day, paymentStart.month - 1, paymentStart.year],
-            [paymentEnd.day, paymentEnd.month - 1, paymentEnd.year]
+            periodStart,
+            periodEnd
           );
       }
     }
     return total;
   }
 
-  function calcPaymentDuration(start, end) {
-    start = new Date(start[2], start[1], start[0]);
-    end = new Date(end[2], end[1], end[0]);
+  function occurancesInPeriod(
+    paymentStart,
+    paymentEnd,
+    freq,
+    periodStart = userDetails["period start date"],
+    periodEnd = userDetails["period end date"]
+  ) {
+    let periodMultiplier = freq[1];
+    let standardPeriod = freq[2];
 
-    if (start > end) {
-      throw RangeError("end date is earlier than start date!");
+    function nextOccurance(temporalDate) {
+      return temporalDate.add({ [standardPeriod + "s"]: periodMultiplier });
     }
 
-    // console.log("start", start, "\nend", end);
-    let paymentDuration = 1;
-    paymentDuration += (end - start) / 86400000;
-    return paymentDuration;
-  }
-
-  function calcOccurances(frequency, start, end) {
-    // calc # of occurances of payment
-    try {
-      let diff = calcPaymentDuration(start, end);
-      let occurances =
-        frequency[0] *
-        Math.floor(diff / (numDaysInPeriod(frequency[2]) * frequency[1]));
-
-      // console.log(
-      //   "start:",
-      //   start,
-      //   "\nend:",
-      //   end,
-      //   "\nfreq:",
-      //   frequency,
-      //   "\ndiff:",
-      //   diff,
-      //   "\noccurances:",
-      //   occurances
-      //   // "\nmultiplier:",
-      //   // numDaysInPeriod(frequency[2])
-      // );
-
-      return occurances;
-    } catch (err) {
-      console.error(err);
+    function numDaysBetween(temporalDate1, temporalDate2) {
+      return temporalDate2.since(temporalDate1).days;
     }
+
+    let [d, m, y] = periodStart;
+    periodStart = new Temporal.PlainDate(y, m, d);
+    [d, m, y] = periodEnd;
+    periodEnd = new Temporal.PlainDate(y, m, d);
+    [d, m, y] = paymentStart;
+    paymentStart = new Temporal.PlainDate(y, m, d);
+
+    // finding the first payment occurance after periodStart
+    let firstPaymentAfterPeriodStart = paymentStart;
+
+    while (
+      Temporal.PlainDate.compare(firstPaymentAfterPeriodStart, periodStart) ===
+      -1
+    ) {
+      firstPaymentAfterPeriodStart = nextOccurance(
+        firstPaymentAfterPeriodStart
+      );
+    }
+
+    // if first payment after period start is also after period end or payment end then
+    if (
+      Temporal.PlainDate.compare(firstPaymentAfterPeriodStart, periodEnd) === 1
+    ) {
+      // payment doesn't occur in this period
+      return 0;
+    }
+
+    // does end of payment limit the last occurance or does end of period?
+    let lowestEndDate;
+    if (paymentEnd) {
+      [d, m, y] = paymentEnd;
+      paymentEnd = new Temporal.PlainDate(y, m, d);
+      lowestEndDate =
+        Temporal.PlainDate.compare(paymentEnd, periodEnd) === -1
+          ? paymentEnd
+          : periodEnd;
+    } else {
+      lowestEndDate = periodEnd;
+    }
+
+    let occurancesWithinPeriod =
+      1 +
+      Math.floor(
+        numDaysBetween(firstPaymentAfterPeriodStart, lowestEndDate) /
+          (numDaysInPeriod(standardPeriod) * periodMultiplier)
+      );
+
+    return occurancesWithinPeriod;
   }
 
   function numDaysInPeriod(period) {
@@ -404,7 +383,7 @@ export function PaymentsProvider({ children }) {
     editPayment,
 
     periodTotal,
-    calcOccurances,
+    occurancesInPeriod,
     calcPeriodTotal,
     dateFilterPayments,
   };

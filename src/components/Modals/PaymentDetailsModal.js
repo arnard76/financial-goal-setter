@@ -6,7 +6,7 @@ import { Temporal } from "@js-temporal/polyfill";
 export default function PaymentDetailsModal({ isOpen, setOpen, payment }) {
   const { setEditingPayment, setViewingPayment } = useModals();
 
-  const { deletePayment, calcOccurances, userDetails } = usePayments();
+  const { deletePayment, occurancesInPeriod, userDetails } = usePayments();
   const { id, name, notes, start, end, frequency, amount } = payment;
   let startDate = new Temporal.PlainDate(start[2], start[1], start[0]);
   let endDate;
@@ -26,12 +26,12 @@ export default function PaymentDetailsModal({ isOpen, setOpen, payment }) {
               {` time${frequency[0] === 1 ? "" : "s"} every `} {frequency[1]}{" "}
               {frequency[2]}
               {frequency[1] === 1 ? "" : "s"} (occurs{" "}
-              {calcOccurances(
-                frequency,
+              {occurancesInPeriod(
                 start,
-                end ? end : userDetails["period end date"]
+                end ? end : userDetails["period end date"],
+                frequency
               )}{" "}
-              times )
+              times)
             </p>
           </>
         ) : (

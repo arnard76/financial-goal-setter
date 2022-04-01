@@ -11,13 +11,14 @@ export default function Payments() {
     payments,
     dateFilterPayments,
     periodTotal,
-    calcOccurances,
+    occurancesInPeriod,
   } = usePayments();
 
   let {
     "period start date": periodStartDate,
     "period end date": periodEndDate,
   } = userDetails;
+
   periodStartDate = new Temporal.PlainDate(
     periodStartDate[2],
     periodStartDate[1],
@@ -42,18 +43,10 @@ export default function Payments() {
         {dateFilterPayments()
           .sort((a, b) => {
             let aFreq = a.frequency
-              ? calcOccurances(
-                  a.frequency,
-                  a.start,
-                  a.end ? a.end : userDetails["period end date"]
-                )
+              ? occurancesInPeriod(a.start, a.end, a.frequency)
               : 1;
             let bFreq = b.frequency
-              ? calcOccurances(
-                  b.frequency,
-                  b.start,
-                  b.end ? b.end : userDetails["period end date"]
-                )
+              ? occurancesInPeriod(b.start, b.end, b.frequency)
               : 1;
             return bFreq - aFreq;
           })

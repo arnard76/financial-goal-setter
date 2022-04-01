@@ -101,7 +101,7 @@ export default function EditPaymentModal({ isOpen, setOpen, payment }) {
   }
 
   // re-calc # of occurances when freq or end/start change
-  const { calcOccurances } = usePayments();
+  const { occurancesInPeriod } = usePayments();
   useEffect(() => {
     if (
       inputValues.type === "Repeated" &&
@@ -111,7 +111,7 @@ export default function EditPaymentModal({ isOpen, setOpen, payment }) {
       const { frequency, start, end } = cleanPaymentFields(inputValues);
       setInputValues({
         ...inputValues,
-        occurances: calcOccurances(frequency, start, end),
+        occurances: occurancesInPeriod(start, end, frequency),
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
