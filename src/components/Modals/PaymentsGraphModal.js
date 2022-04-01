@@ -14,25 +14,38 @@ export default function PaymentsGraphModal({ isOpen, setOpen }) {
   const { calcPeriodTotal, userDetails } = usePayments();
   let [day, month, year] = userDetails["period start date"];
   const startDate = new Temporal.PlainDate(year, month, day);
+  [day, month, year] = userDetails["period end date"];
+  const endDate = new Temporal.PlainDate(year, month, day);
+
   let chartData = {
-    labels: [...Array(52 + 1).keys()].slice(1),
+    labels: [
+      ...Array(Math.floor(endDate.since(startDate).days / 7) + 1).keys(),
+    ].slice(1),
     datasets: [
       {
-        label: "Weeks of your financial period",
-        data: [...Array(52).keys()].map((weekNumber) => {
+        label: "Amount spent this week",
+
+        data: [
+          ...Array(Math.floor(endDate.since(startDate).days / 7)).keys(),
+        ].map((weekNumber) => {
           let start = startDate.add({ weeks: weekNumber });
           let end = start.add({ days: 6 });
           start = [start.day, start.month, start.year];
           end = [end.day, end.month, end.year];
+          console.log(
+            "week",
+            weekNumber,
+            "start",
+            start,
+            "end",
+            end,
+            "total",
+            calcPeriodTotal(start, end),
+            "\n"
+          );
           return calcPeriodTotal(start, end);
         }),
-        backgroundColor: [
-          "#ffbb11",
-          "#ecf0f1",
-          "#50AF95",
-          "#f3ba2f",
-          "#2a71d0",
-        ],
+        backgroundColor: ["grey", "white", "black"],
       },
     ],
   };
@@ -44,11 +57,40 @@ export default function PaymentsGraphModal({ isOpen, setOpen }) {
           plugins: {
             title: {
               display: true,
-              text: "Payments amounts",
+              color: "white",
+              text: "Total spent in each week",
             },
             legend: {
-              display: true,
-              position: "bottom",
+              display: false,
+            },
+            tooltip: {
+              callbacks: {
+                title: (context) => "Week #" + context[0].label,
+                label: (context) =>
+                  context.formattedValue < 0
+                    ? `Earned $${context.formattedValue * -1}`
+                    : `Spent $${context.formattedValue}`,
+              },
+            },
+          },
+          scales: {
+            y: {
+              title: { display: true, text: "Amount spent", color: "white" },
+              ticks: {
+                callback: function (value) {
+                  if (value < 0) {
+                    return "-$" + value * -1;
+                  }
+                  return "$" + value;
+                },
+              },
+            },
+            x: {
+              title: { display: true, text: "Week number", color: "white" },
+              ticks: {
+                callback: (value) =>
+                  (value + 1) % 5 === 0 ? value + 1 : undefined,
+              },
             },
           },
         }}
