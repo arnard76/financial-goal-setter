@@ -11,6 +11,7 @@ export default function Payments() {
     payments,
     dateFilterPayments,
     periodTotal,
+    calcPeriodTotal,
     occurancesInPeriod,
   } = usePayments();
 
@@ -30,6 +31,22 @@ export default function Payments() {
     periodEndDate[1],
     periodEndDate[0]
   );
+
+  let numOfWholeWeeks = Math.floor(
+    periodEndDate.since(periodStartDate).days / 7
+  );
+
+  let lastDayOfLastWholeWeek = periodStartDate.add({
+    weeks: numOfWholeWeeks - 1,
+    days: 6,
+  });
+
+  let weeklyAverage =
+    calcPeriodTotal(userDetails["period start date"], [
+      lastDayOfLastWholeWeek.day,
+      lastDayOfLastWholeWeek.month,
+      lastDayOfLastWholeWeek.year,
+    ]) / numOfWholeWeeks;
 
   return (
     <div className="flex flex-col flex-1 p-4  bg-white dark:bg-gray-900 h-screen">
