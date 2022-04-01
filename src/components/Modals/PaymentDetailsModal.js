@@ -16,7 +16,7 @@ export default function PaymentDetailsModal({ isOpen, setOpen, payment }) {
   return (
     <Modal isOpen={isOpen} setOpen={setOpen} title={`Viewing: ${payment.name}`}>
       <div className="dark:text-white">
-        <p className="text-2xl">{name}</p>
+        <p className="text-2xl mb-2">{name}</p>
         <p>Notes: {notes}</p>
         <p>
           Amount:{" "}
