@@ -18,7 +18,12 @@ export default function PaymentDetailsModal({ isOpen, setOpen, payment }) {
       <div className="dark:text-white">
         <p className="text-2xl">{name}</p>
         <p>Notes: {notes}</p>
-        <p>Amount: {amount}</p>
+        <p>
+          Amount:{" "}
+          {amount < 0
+            ? "-$" + (amount * -1).toFixed(2)
+            : "$" + amount.toFixed(2)}
+        </p>
         {frequency !== null ? (
           <>
             <p>

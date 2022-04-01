@@ -14,7 +14,11 @@ export default function Payment({ payment, onClick, active }) {
         }  border-2 `}
         style={{ cursor: "pointer" }}
       >
-        <p className="flex-1 ">${amount}</p>
+        <p className="flex-1 ">
+          {amount < 0
+            ? "-$" + (amount * -1).toFixed(2)
+            : "$" + amount.toFixed(2)}
+        </p>
         <p className="flex-1">{name}</p>
         <p className="flex-1">
           {frequency === null

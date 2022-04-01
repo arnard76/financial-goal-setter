@@ -84,8 +84,18 @@ export default function Payments() {
             {periodEndDate.toLocaleString("en-NZ")}
           </p>
         </div>
-        <p>Sum: ${periodTotal.toFixed(2)}</p>
-        <p>Weekly average: ${(periodTotal / 52).toFixed(2)} </p>
+        <p>
+          Total:{" "}
+          {periodTotal < 0
+            ? "-$" + (periodTotal * -1).toFixed(2)
+            : "$" + periodTotal.toFixed(2)}
+        </p>
+        <p>
+          Weekly average:{" "}
+          {weeklyAverage < 0
+            ? "-$" + (weeklyAverage * -1).toFixed(2)
+            : "$" + weeklyAverage.toFixed(2)}
+        </p>
       </div>
     </div>
   );
