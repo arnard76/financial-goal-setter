@@ -6,6 +6,7 @@ import { ModalsProvider } from "../contexts/ModalsContext";
 // User Authentication stuff
 import SignUp from "./Auth/SignUp";
 import LogIn from "./Auth/LogIn";
+import GuestLogIn from "./Auth/GuestLogIn";
 import Profile from "./Auth/Profile";
 import PasswordReset from "./Auth/PasswordReset";
 import UpdateProfile from "./Auth/UpdateProfile";
@@ -22,6 +23,7 @@ function AuthApp() {
           <Switch>
             <Route path="/signup" component={SignUp} />
             <Route path="/login" component={LogIn} />
+            <Route path="/guest" component={GuestLogIn} />
             <Route path="/forgot-password" component={PasswordReset} />
 
             <PrivateRoute path="/profile" component={Profile} />
@@ -58,6 +60,7 @@ function App() {
             {/* All auth paths - logged out */}
             <Route path="/signup" component={AuthApp} />
             <Route path="/login" component={AuthApp} />
+            <Route path="/guest" component={AuthApp} />
             <Route path="/forgot-password" component={AuthApp} />
 
             {/* All auth paths - logged in */}
